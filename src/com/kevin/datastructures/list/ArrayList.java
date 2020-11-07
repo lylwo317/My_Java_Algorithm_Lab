@@ -1,4 +1,4 @@
-package com.kevin.algorithm.list;
+package com.kevin.datastructures.list;
 
 public class ArrayList {
     private int size;
