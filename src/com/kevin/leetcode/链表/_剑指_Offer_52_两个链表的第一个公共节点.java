@@ -1,6 +1,6 @@
 package com.kevin.leetcode.链表;
 
-public class 剑指_Offer_52_两个链表的第一个公共节点 {
+public class _剑指_Offer_52_两个链表的第一个公共节点 {
 
     _剑指_Offer_52_两个链表的第一个公共节点() {
         
