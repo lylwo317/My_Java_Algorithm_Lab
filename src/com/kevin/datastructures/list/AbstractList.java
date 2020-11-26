@@ -2,7 +2,7 @@ package com.kevin.datastructures.list;
 
 public abstract class AbstractList<T> implements List<T> {
 
-    private int size;
+    protected int size;
 
     @Override
     public int size(){
@@ -33,13 +33,13 @@ public abstract class AbstractList<T> implements List<T> {
         throw new IndexOutOfBoundsException("Index:" + index + ", Size:" + size);
     }
 
-    private void rangeForCheck(int index) {
+    protected void rangeForCheck(int index) {
         if (index < 0 || index >= size) {
             outOfBounds(index);
         }
     }
 
-    private void rangeForAddCheck(int index) {
+    protected void rangeForAddCheck(int index) {
         if (index < 0 || index > size) {
             outOfBounds(index);
         }

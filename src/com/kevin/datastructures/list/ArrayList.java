@@ -4,12 +4,12 @@ import java.util.Arrays;
 
 public class ArrayList<T> extends AbstractList<T> {
     private static final int ELEMENT_NOT_FOUND = -1;
-    private int size;//已添加的属性
     private Object[] elements = new Object[0];
 
     private static final int DEFAULT_CAPACITY = 10;
 
     public ArrayList() {
+        java.util.ArrayList
         this(DEFAULT_CAPACITY);
     }
 
@@ -135,17 +135,6 @@ public class ArrayList<T> extends AbstractList<T> {
             elements = new Object[newCapacity];
             System.arraycopy(oldArray,0,elements,0,oldArray.length);
             System.out.println(oldCapacity + "扩容为" + newCapacity);
-        }
-    }
-    private void rangeForCheck(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index = " + index + ", " + "Size = " + size);
-        }
-    }
-
-    private void rangeForAddCheck(int index) {
-        if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException("Index = " + index + ", " + "Size = " + size);
         }
     }
 
