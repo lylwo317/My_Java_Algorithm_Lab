@@ -9,7 +9,6 @@ public class ArrayList<T> extends AbstractList<T> {
     private static final int DEFAULT_CAPACITY = 10;
 
     public ArrayList() {
-        java.util.ArrayList
         this(DEFAULT_CAPACITY);
     }
 
@@ -73,13 +72,13 @@ public class ArrayList<T> extends AbstractList<T> {
     @Override
     public void add(int index, T element) {
         //1.添加前先检查是否越界
-        rangeForAddCheck(index);//不符合就抛出异常
+        rangeForAddCheck(index);//不符合就抛出异常 O(1)
 
         //2.确认容量是否满足，不然就扩容
         ensureCapacity(size + 1);
 
         //3.添加。如果不是最后一个元素，就进行移动
-        for (int i = size - 1; i >= index ; i--) {
+        for (int i = size - 1; i >= index ; i--) {//O(n)数据规模
             elements[i + 1] = elements[i];
         }
 
@@ -112,6 +111,11 @@ public class ArrayList<T> extends AbstractList<T> {
         return ELEMENT_NOT_FOUND;
     }
 
+    /**
+     * 复杂度O(1)
+     * @param index
+     * @return
+     */
     @Override
     public T get(int index){
         rangeForCheck(index);

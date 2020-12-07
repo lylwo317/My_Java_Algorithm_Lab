@@ -13,7 +13,7 @@ public class Main {
         }
         System.out.println(list);
 
-        List<String> list2 = new LinkedList<>();
+        List<String> list2 = new LinkedList2<>();
         list2.add("10");
         list2.add("11");
         list2.add("13");

@@ -6,22 +6,33 @@ public class _206_反转链表 {
 
     /**
      * 使用递归
-     * @param head
+     * @param node
      * @return
      */
-/*
-    public ListNode reverseList(ListNode head) {
-        if( head == null || head.next == null){
-            return head;
+    public ListNode reverseList2(ListNode node) {
+        if( node == null || node.next == null){
+            return node;
         }
 
-        ListNode newHead = reverseList(head.next);
-        head.next.next = head;
-        head.next = null;
+        ListNode newHead = reverseList2(node.next);
+        node.next.next = node;
+        node.next = null;
 
         return newHead;
     }
-*/
+
+    public ListNode reverseList3(ListNode node) {
+        if( node == null || node.next == null){
+            return node;
+        }
+
+        ListNode newHead = reverseList3(node.next);
+
+        node.next.next = node;
+        node.next = null;
+
+        return newHead;
+    }
 
     /**
      * 使用迭代
