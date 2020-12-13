@@ -6,17 +6,17 @@ import java.util.Comparator;
 import java.util.Stack;
 
 /**
- * 二叉搜索树
+ * 二叉平衡树
  * @param <E>
  */
-public class BinarySearchTree<E> extends BinaryTree<E> {
+public class AVLTree<E> extends BinarySearchTree<E> {
 
     private Comparator<E> comparator;
 
-    public BinarySearchTree() {
+    public AVLTree() {
     }
 
-    public BinarySearchTree(Comparator<E> comparator) {
+    public AVLTree(Comparator<E> comparator) {
         this.comparator = comparator;
     }
 
