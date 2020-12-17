@@ -23,15 +23,37 @@ public abstract class BinaryTree<E> implements BinaryTreeInfo {
             return left == null && right == null;
         }
 
-        public boolean isChild(Node<E> parent) {
-            return parent.left == this || parent.right == this;
+        public boolean isChild() {
+            return parent != null;
+        }
+
+        public boolean isLeftChild() {
+            return parent != null && parent.left == this;
+        }
+
+        public boolean isRightChild() {
+            return parent != null && parent.right == this;
+        }
+
+        public Node<E> sibling() {//兄弟
+            if (isLeftChild()) {
+                return parent.right;
+            }
+
+            if (isRightChild()) {
+                return parent.left;
+            }
+
+            return null;
         }
 
         @Override
         public String toString() {
-            return "Node{" +
-                    "element=" + element +
-                    '}';
+            String parentString = "null";
+            if (parent != null) {
+                parentString = parent.element.toString();
+            }
+            return element + "_p(" + parentString + ")";
         }
     }
 
@@ -43,6 +65,10 @@ public abstract class BinaryTree<E> implements BinaryTreeInfo {
         }
 
         abstract boolean visit(T element);
+    }
+
+    public Node<E> createNode(E element, Node<E> parent) {
+        return new Node<>(element, parent);
     }
 
     protected int size;
@@ -208,7 +234,7 @@ public abstract class BinaryTree<E> implements BinaryTreeInfo {
 
         while (!nodeStack.isEmpty()) {
             cur = nodeStack.peek();
-            if (cur.isLeaf() || (pre != null && pre.isChild(cur))) {
+            if (cur.isLeaf() || (pre != null && (cur.right == pre || cur.left == pre))) {
                 visitor.stop = visitor.visit(cur.element);
                 if (visitor.stop) {
                     return;
@@ -424,12 +450,7 @@ public abstract class BinaryTree<E> implements BinaryTreeInfo {
 
     @Override
     public Object string(Object node) {
-        Node<E> myNode = (Node<E>)node;
-        String parentString = "null";
-        if (myNode.parent != null) {
-            parentString = myNode.parent.element.toString();
-        }
-        return myNode.element + "_p(" + parentString + ")";
+        return node;
     }
 
     public abstract void add(E element);

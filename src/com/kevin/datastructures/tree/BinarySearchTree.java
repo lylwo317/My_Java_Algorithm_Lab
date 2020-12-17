@@ -37,7 +37,8 @@ public class BinarySearchTree<E> extends BinaryTree<E> {
         }
 
         if (root == null) {
-            root = new Node<>(element, null);
+            root = createNode(element, null);
+            afterAdd(root);
             size++;
             return;
         }
@@ -60,12 +61,22 @@ public class BinarySearchTree<E> extends BinaryTree<E> {
             }
         } while (node != null);
 
+        Node<E> newNode = createNode(element, parent);
         if (compare < 0) {
-            parent.left = new Node<>(element, parent);
+            parent.left = newNode;
         } else {
-            parent.right = new Node<>(element, parent);
+            parent.right = newNode;
         }
+        afterAdd(newNode);
         size++;
+    }
+
+    protected void afterAdd(Node<E> node) {
+
+    }
+
+    protected void afterRemove(Node<E> node) {
+
     }
 
     /**
@@ -102,17 +113,16 @@ public class BinarySearchTree<E> extends BinaryTree<E> {
             //来代替原来节点的位置。（这样不但保持了二叉搜索树的性质，还解决了删除后连接到父节点的问题）
 
             //度为2的节点就找前驱或者后继节点来替代当前节点
-            Node<E> predecessor = predecessor(node);
+            Node<E> successor = successor(node);
             //replace
-            node.element = predecessor.element;
-            node = predecessor;//前驱或者后继节点的度必然不会是2
+            node.element = successor.element;
+            node = successor;//前驱或者后继节点的度必然不会是2
         }
 
         //叶子节点直接删除
         if (node.isLeaf()) {//度为0的节点
             if (node == root) {
                 root = null;
-                return;
             } else {
                 if (node.parent.left == node) {
                     node.parent.left = null;
@@ -120,10 +130,7 @@ public class BinarySearchTree<E> extends BinaryTree<E> {
                     node.parent.right = null;
                 }
             }
-            return;
-        }
-
-        if (node.left == null || node.right == null) {//度为1的节点
+        } else {//度为1的节点
             if (node == root) {//node.parent == null
                 if (node.left != null) {
                     root = node.left;
@@ -146,9 +153,12 @@ public class BinarySearchTree<E> extends BinaryTree<E> {
                     parent.right = replaceNode;
                 }
 
-                replaceNode.parent = parent;
+                if (replaceNode != null) {
+                    replaceNode.parent = parent;
+                }
             }
         }
+        afterRemove(node);
         size--;
     }
 

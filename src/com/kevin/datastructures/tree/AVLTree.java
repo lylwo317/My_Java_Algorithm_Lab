@@ -1,12 +1,61 @@
 package com.kevin.datastructures.tree;
 
-import com.sun.istack.internal.Nullable;
-
 import java.util.Comparator;
-import java.util.Stack;
 
 /**
- * 二叉平衡树
+ * <pre>
+ * 在计算机科学中，AVL树是最先发明的自平衡二叉查找树。在AVL树中任何节点的两个子树的高度最大差别为1，所以它也被称为高度平衡树。
+ * 增加和删除可能需要通过一次或多次树旋转来重新平衡这个树。
+ * AVL树得名于它的发明者G. M. Adelson-Velsky和E. M. Landis，他们在1962年的论文《An algorithm for the organization of information》中发表了它。
+ *
+ * 平衡因子：节点的左右子树高度差
+ *
+ * 特点：
+ * 1. 每个节点的平衡因子0,1,-1（绝对值<=1）。也就是左右子树高度差不超过1
+ *
+ * 如何恢复平衡：
+ * 旋转。当平衡因子大于1的时候，通过旋转就可以让树恢复平衡。
+ *
+ * 旋转为什么能恢复平衡？
+ * 1. 首先所谓的旋转其实本质就是调整节点相对位置，因添加的到节点导致失衡的子树重新恢复平衡。本质就是将左右
+ * LL --> 右旋转。可以看到本来高度差（平衡因子）是1，但是由于添加了12， 导致子树的左右两边高度差变为2。通过右旋，使得子树的高度恢复成2。
+ * 本质就是将导致的失衡的子树往上移动（降低1个高度，使得高度差恢复到1）,右边子树往下移动一位。这样假设原来的左右高度是2,0 --> 1,1
+ *            34(2)           34(3)            23(2)
+ *            /               /               /    \
+ *           23(1)    --->   23(2)    --->   12(1) 34(1)
+ *                           /
+ *                          12(1)
+ *
+ *
+ * RR --> 左旋转。可以看到本来高度差（平衡因子）是1，但是由于添加了72， 导致子树的左右两边高度差变为2。通过右旋，使得子树的高度恢复成2。
+ *
+ *          34(2)           34(3)               53(2)
+ *              \               \              /    \
+ *            53(1)  --->    53(2)    --->  34(1)  72(1)
+ *                               \
+ *                             72(1)
+ *
+ *
+ * LR --> 20左旋转，40右旋转。可以看到本来高度差（平衡因子）是1，但是由于添加了30， 导致子树的左右两边高度差变为2。通过两次旋转，使得子树的高度恢复成2。
+ * 高度变化（2,0->1,1）
+ *          40(3)            40(3)             30(2)
+ *          /                /                /    \
+ *         20(2)    --->    30(2)    --->   20(1)  40(1)
+ *          \              /
+ *          30(1)         20(1)
+ *
+ *
+ * RL --> 53右旋转，34左旋。可以看到本来高度差（平衡因子）是1，但是由于添加了40， 导致子树的左右两边高度差变为2。通过两次旋转，使得子树的高度恢复成2。
+ *
+ *          34(3)           34(3)               40(2)
+ *             \               \               /    \
+ *            53(2)  --->    40(2)    --->   34(1)  53(1)
+ *            /                 \
+ *          40(1)             53(1)
+ *
+ * RL 通过一次右旋 转成 RR ，然后再左旋恢复平衡
+ * </pre>
+ * 平衡二叉搜索树
  * @param <E>
  */
 public class AVLTree<E> extends BinarySearchTree<E> {
@@ -17,177 +66,155 @@ public class AVLTree<E> extends BinarySearchTree<E> {
     }
 
     public AVLTree(Comparator<E> comparator) {
-        this.comparator = comparator;
+        super(comparator);
     }
 
-    /**
-     * 添加一个元素要做一些这些：
-     * 1.检查元素是否为空，空就不添加，因为添加空的元素，无法比较大小
-     * 2.是否是第一个节点,是的话直接root = newNode
-     * 3.不是第一个节点,找到合适的位置，然后添加上去，如果发现有相同的，就直接替换
-     *
-     * 复杂度：O(h) == O(logN)
-     * 最坏时间复杂度：O(h) == O(n)，退化成链表的时候
-     * @param element
-     */
+    private static class AVLNode<E> extends Node<E> {
+        private int height = 1;
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
+
+        public AVLNode(E element, Node<E> parent) {
+            super(element, parent);
+        }
+
+
+        public boolean isBalanced() {
+            int leftHeight = left != null ? ((AVLNode<E>)left).getHeight() : 0;
+            int rightHeight = right != null ? ((AVLNode<E>)right).getHeight() : 0;
+            return Math.abs(leftHeight - rightHeight) <= 1;
+        }
+
+        public void updateHeight() {
+            int leftHeight = left != null ? ((AVLNode<E>)left).getHeight() : 0;
+            int rightHeight = right != null ? ((AVLNode<E>)right).getHeight() : 0;
+            height = Math.max(leftHeight,rightHeight) + 1;
+        }
+
+        public Node<E> tallerChild() {
+            int leftHeight = left != null ? ((AVLNode<E>)left).getHeight() : 0;
+            int rightHeight = right != null ? ((AVLNode<E>)right).getHeight() : 0;
+            return Math.max(leftHeight, rightHeight) == rightHeight ? right : left;
+        }
+
+        @Override
+        public String toString() {
+            String parentString = "null";
+            if (parent != null) {
+                parentString = parent.element.toString();
+            }
+            return element + "_p(" + parentString + ")_h(" + height + ")";
+        }
+    }
+
     @Override
-    public void add(E element){
-        if (element == null) {
-            throw new IllegalArgumentException("element must not be null");
-        }
-
-        if (root == null) {
-            root = new Node<>(element, null);
-            size++;
-            return;
-        }
-
-        Node<E> node = root;
-        Node<E> parent;
-        int compare;
-        do {
-            compare = compare(element, node.element);
-            if (compare == 0) {
-                node.element = element;
-                return;
-            }
-
-            parent = node;
-            if (compare < 0) {
-                node = node.left;
-            } else {//compare > 0
-                node = node.right;
-            }
-        } while (node != null);
-
-        if (compare < 0) {
-            parent.left = new Node<>(element, parent);
-        } else {
-            parent.right = new Node<>(element, parent);
-        }
-        size++;
+    public Node<E> createNode(E element, Node<E> parent) {
+        return new AVLNode<>(element, parent);
     }
 
-    /**
-     * 根据 element 找到Node，然后删除。
-     *
-     * 复杂度：O(h) == O(logN)
-     * 最坏时间复杂度：O(h) == O(n)，退化成链表的时候
-     * @param element
-     */
+    private boolean isBalanced(Node<E> node) {
+        return ((AVLNode<E>) node).isBalanced();
+    }
+
     @Override
-    public void remove(@Nullable E element) {
-        removeNode(findNode(element));
+    protected void afterAdd(Node<E> node) {
+        //添加的节点都是叶子节点
+        while (node.parent != null) {
+            node = node.parent;
+            if (isBalanced(node)) {//平衡的话，就只更新高度
+                updateHeight(node);
+            } else {//不平衡的话，要调整平衡，并更新高度
+                reBalance(node);
+            }
+        }
+    }
+
+    @Override
+    protected void afterRemove(Node<E> node) {
+        //添加的节点都是叶子节点
+        while (node.parent != null) {
+            node = node.parent;
+            if (isBalanced(node)) {//平衡的话，就只更新高度
+                updateHeight(node);
+            } else {//不平衡的话，要调整平衡，并更新高度
+                reBalance(node);
+            }
+        }
     }
 
     /**
-     * 删除节点
-     *
-     * 1. 节点的度为2
-     *      找到前驱或者后继节点，然后将前驱或者后继节点覆盖当前节点，接着将前驱或者后继节点删除即可
-     * 2. 节点的度为1
-     *      删除，然后将子节点接到父节点上
-     * 3. 节点的度为0
-     *      直接删除
-     *
-     * 综上所述，本质上删除的都是度为0或者1的节点
-     *
+     * 恢复平衡
      */
-    private void removeNode(@Nullable Node<E> node) {
-        if (node == null) {
-            return;
-        }
-        if (node.left != null && node.right != null) {//度为2的节点
-            //如果直接删除，这个时候有两棵子树就好不连接到父节点了。这个时候要连接到父节，就应该在左子树中找到最大的节点（右子树中找到最小节点）
-            //来代替原来节点的位置。（这样不但保持了二叉搜索树的性质，还解决了删除后连接到父节点的问题）
-
-            //度为2的节点就找前驱或者后继节点来替代当前节点
-            Node<E> predecessor = predecessor(node);
-            //replace
-            node.element = predecessor.element;
-            node = predecessor;//前驱或者后继节点的度必然不会是2
-        }
-
-        //叶子节点直接删除
-        if (node.isLeaf()) {//度为0的节点
-            if (node == root) {
-                root = null;
-                return;
-            } else {
-                if (node.parent.left == node) {
-                    node.parent.left = null;
-                } else {
-                    node.parent.right = null;
-                }
+    private void reBalance(Node<E> grand) {
+        AVLNode<E> parent = (AVLNode<E>) ((AVLNode<E>) grand).tallerChild();
+        AVLNode<E> node = (AVLNode<E>) ((AVLNode<E>) parent).tallerChild();
+        if (parent.isLeftChild()) {//L
+            if (node.isLeftChild()) {//LL
+                rotateRight(grand);
+            } else {//LR
+                rotateLeft(parent);
+                rotateRight(grand);
             }
-            return;
-        }
-
-        if (node.left == null || node.right == null) {//度为1的节点
-            if (node == root) {//node.parent == null
-                if (node.left != null) {
-                    root = node.left;
-                } else {
-                    root = node.right;
-                }
-                node.parent = null;
-            } else {
-                Node<E> replaceNode;
-                if (node.left != null) {
-                    replaceNode = node.left;
-                } else {
-                    replaceNode = node.right;
-                }
-
-                Node<E> parent = node.parent;
-                if (parent.left == node) {
-                    parent.left = replaceNode;
-                } else {
-                    parent.right = replaceNode;
-                }
-
-                replaceNode.parent = parent;
+        } else if (parent.isRightChild()) {//R
+            if (node.isRightChild()) {//RR
+                rotateLeft(grand);
+            } else {//RL
+                rotateRight(parent);
+                rotateLeft(grand);
             }
         }
-        size--;
     }
 
-    public boolean contains(E element) {
-        return findNode(element) != null;
+    private void rotateLeft(Node<E> grand) {
+        Node<E> rootNode = grand.parent;
+        Node<E> parent = grand.right;
+        Node<E> subTree = parent.left;
+
+        parent.left = grand;
+        grand.right = subTree;
+
+        afterRotate(rootNode, grand, parent, subTree);
     }
 
-    /**
-     *  通过，前序，中序，后序，层序遍历等手段找到元素
-     */
-    private Node<E> findNode(E element) {
-        if (element == null) {
-            return null;
-        }
-        Stack<Node<E>> nodeStack = new Stack<>();
-        Node<E> node = root;
-        do {
-            while (node != null) {
-                nodeStack.push(node);
-                node = node.left;
-            }
+    private void rotateRight(Node<E> grand) {
+        Node<E> rootNode = grand.parent;
+        Node<E> parent = grand.left;
+        Node<E> subTree = parent.right;
 
-            if (!nodeStack.isEmpty()) {
-                Node<E> pop = nodeStack.pop();
-                if (pop.element.equals(element)) {
-                    return pop;
-                }
-                node = pop.right;
-            }
+        parent.right = grand;
+        grand.left = subTree;
 
-        } while (node != null || !nodeStack.isEmpty());
-        return null;
+        afterRotate(rootNode, grand, parent, subTree);
     }
 
-    private int compare(E e1, E e2) {
-        if (comparator != null) {
-            return comparator.compare(e1, e2);
+    private void afterRotate(Node<E> rootNode, Node<E> grand, Node<E> parent, Node<E> subTree) {
+        if (grand.isLeftChild()) {
+            rootNode.left = parent;
+        } else if (grand.isRightChild()) {
+            rootNode.right = parent;
+        } else {//根节点
+            root = parent;
         }
 
-        return ((Comparable<E>) e1).compareTo(e2);
+        //update node.parent
+        if (subTree != null) {
+            subTree.parent = grand;
+        }
+        grand.parent = parent;
+        parent.parent = rootNode;
+
+        updateHeight(grand);
+        updateHeight(parent);
+    }
+
+
+    private void updateHeight(Node<E> node) {
+        ((AVLNode<E>) node).updateHeight();
     }
 }
