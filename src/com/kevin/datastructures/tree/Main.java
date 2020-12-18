@@ -2,8 +2,12 @@ package com.kevin.datastructures.tree;
 
 
 import com.kevin.datastructures.Asserts;
+import com.kevin.datastructures.tree.printer.BinaryTreeInfo;
 import com.kevin.datastructures.tree.printer.BinaryTrees;
 import com.sun.xml.internal.ws.spi.db.BindingInfo;
+
+import java.util.HashSet;
+import java.util.Random;
 
 @SuppressWarnings("unused")
 public class Main {
@@ -162,29 +166,49 @@ public class Main {
 	}
 
 	private static void testRedBlackTree() {
-		BinarySearchTree<Integer> rbtree = new RBTree<>();
-		Integer data[] = new Integer[]{
-				1, 97, 5, 67, 52, 19, 62, 84, 73, 66, 59, 37, 77, 86, 9
+		RBTree<Integer> rbtree = new RBTree<>();
+		for (int i = 0; i < 10; i++) {
+			Random ran = new Random();
+			HashSet<Integer> hs = new HashSet<>();
+			for (;;) {
+				int tmp = ran.nextInt(1000)+1;
+				hs.add(tmp);
+				if(hs.size() == 100) break;
+			}
+
+			for (Integer datum : hs.toArray(new Integer[0])) {
+				rbtree.add(datum);
+				Asserts.test(rbtree.isRBTree());
+			}
+			BinaryTrees.println(rbtree);
+
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println();
+
+			for (Integer datum : hs.toArray(new Integer[0])) {
+				System.out.println("remove: " + datum);
+				rbtree.remove(datum);
+				BinaryTrees.println(rbtree);
+				Asserts.test(rbtree.isRBTree());
+			}
+
+		}
+	}
+
+	static void testRedBlackTree2() {
+		Integer data[] = new Integer[] {
+				60,55,65,50,70,57,63,40,53,58,62
 		};
 
+		RBTree<Integer> rbTree = new RBTree<>();
 		for (Integer datum : data) {
-			rbtree.add(datum);
+			rbTree.add(datum);
+			Asserts.test(rbTree.isRBTree());
 		}
-		BinaryTrees.println(rbtree);
-		rbtree.remove(86);
-		BinaryTrees.println(rbtree);
-		rbtree.remove(73);
-		BinaryTrees.println(rbtree);
-		rbtree.remove(97);
-		BinaryTrees.println(rbtree);
-		rbtree.remove(77);
-		BinaryTrees.println(rbtree);
-		rbtree.remove(84);
-		BinaryTrees.println(rbtree);
-		rbtree.remove(67);
-		BinaryTrees.println(rbtree);
-		rbtree.remove(66);
-		BinaryTrees.println(rbtree);
+
+		BinaryTrees.println(rbTree);
 	}
 
 	public static void main(String[] args) {
@@ -194,8 +218,9 @@ public class Main {
 		testIsCompleteTree();
 		testRemove();
 		testAVL();
-*/
         testRedBlackTree();
+*/
+		testRedBlackTree();
 	}
 
 }

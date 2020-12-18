@@ -137,7 +137,7 @@ public class BinarySearchTree<E> extends BinaryTree<E> {
                 } else {
                     root = node.right;
                 }
-                node.parent = null;
+                root.parent = null;
             } else {
                 Node<E> replaceNode;
                 if (node.left != null) {

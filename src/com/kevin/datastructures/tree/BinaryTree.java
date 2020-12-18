@@ -31,6 +31,10 @@ public abstract class BinaryTree<E> implements BinaryTreeInfo {
             return parent != null && parent.left == this;
         }
 
+        public boolean hasTwoChildren() {
+            return left != null && right != null;
+        }
+
         public boolean isRightChild() {
             return parent != null && parent.right == this;
         }
