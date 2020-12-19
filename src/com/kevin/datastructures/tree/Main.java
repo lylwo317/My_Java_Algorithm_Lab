@@ -167,17 +167,19 @@ public class Main {
 
 	private static void testRedBlackTree() {
 		RBTree<Integer> rbtree = new RBTree<>();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			Random ran = new Random();
 			HashSet<Integer> hs = new HashSet<>();
 			for (;;) {
-				int tmp = ran.nextInt(1000)+1;
+				int tmp = ran.nextInt(200)+1;
 				hs.add(tmp);
 				if(hs.size() == 100) break;
 			}
 
 			for (Integer datum : hs.toArray(new Integer[0])) {
+				System.out.println("add: " + datum);
 				rbtree.add(datum);
+				BinaryTrees.println(rbtree);
 				Asserts.test(rbtree.isRBTree());
 			}
 			BinaryTrees.println(rbtree);
@@ -204,7 +206,16 @@ public class Main {
 
 		RBTree<Integer> rbTree = new RBTree<>();
 		for (Integer datum : data) {
+			System.out.println("add: " + datum);
 			rbTree.add(datum);
+			BinaryTrees.println(rbTree);
+			Asserts.test(rbTree.isRBTree());
+		}
+
+		for (Integer datum : data){
+			System.out.println("remove: " + datum);
+			rbTree.remove(datum);
+			BinaryTrees.println(rbTree);
 			Asserts.test(rbTree.isRBTree());
 		}
 
