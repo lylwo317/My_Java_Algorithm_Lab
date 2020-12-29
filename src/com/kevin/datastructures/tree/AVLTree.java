@@ -60,8 +60,6 @@ import java.util.Comparator;
  */
 public class AVLTree<E> extends BinarySearchTree<E> {
 
-    private Comparator<E> comparator;
-
     public AVLTree() {
     }
 
@@ -155,19 +153,17 @@ public class AVLTree<E> extends BinarySearchTree<E> {
         AVLNode<E> parent = (AVLNode<E>) ((AVLNode<E>) grand).tallerChild();
         AVLNode<E> node = (AVLNode<E>) ((AVLNode<E>) parent).tallerChild();
         if (parent.isLeftChild()) {//L
-            if (node.isLeftChild()) {//LL
-                rotateRight(grand);
-            } else {//LR
+            if (node.isRightChild()) {//LR
                 rotateLeft(parent);
-                rotateRight(grand);
             }
+            //LL
+            rotateRight(grand);
         } else if (parent.isRightChild()) {//R
-            if (node.isRightChild()) {//RR
-                rotateLeft(grand);
-            } else {//RL
+            if (node.isLeftChild()) {//RL
                 rotateRight(parent);
-                rotateLeft(grand);
             }
+            //RR
+            rotateLeft(grand);
         }
     }
 

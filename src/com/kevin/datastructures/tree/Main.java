@@ -39,7 +39,7 @@ public class Main {
 		bst1.preorderRecursion(new BinarySearchTree.Visitor<Integer>(){
 
 			@Override
-			boolean visit(Integer element) {
+			public boolean visit(Integer element) {
 				System.out.print(element + "_");
 				return element == 5;
 			}
@@ -49,7 +49,7 @@ public class Main {
 		System.out.println("preorderIteration");
 		bst1.preorderIteration(new BinarySearchTree.Visitor<Integer>() {
 			@Override
-			boolean visit(Integer element) {
+			public boolean visit(Integer element) {
 				System.out.print(element + "_");
 				return element == 5;
 			}
@@ -59,7 +59,7 @@ public class Main {
 		System.out.println("inorderRecursion");
 		bst1.inorderRecursion(new BinarySearchTree.Visitor<Integer>() {
 			@Override
-			boolean visit(Integer element) {
+			public boolean visit(Integer element) {
 				System.out.print(element + "_");
 				return element == 5;
 			}
@@ -69,7 +69,7 @@ public class Main {
 		System.out.println("inorderIteration");
 		bst1.inorderIteration(new BinarySearchTree.Visitor<Integer>() {
 			@Override
-			boolean visit(Integer element) {
+			public boolean visit(Integer element) {
 				System.out.print(element + "_");
 				return element == 5;
 			}
@@ -79,7 +79,7 @@ public class Main {
 		System.out.println("postorderRecursion");
 		bst1.postorderRecursion(new BinarySearchTree.Visitor<Integer>() {
 			@Override
-			boolean visit(Integer element) {
+			public boolean visit(Integer element) {
 				System.out.print(element + "_");
 				return element == 5;
 			}
@@ -89,7 +89,7 @@ public class Main {
 		System.out.println("postorderIteration");
 		bst1.postorderIteration(new BinarySearchTree.Visitor<Integer>() {
 			@Override
-			boolean visit(Integer element) {
+			public boolean visit(Integer element) {
 				System.out.print(element + "_");
 				return element == 5;
 			}
@@ -166,23 +166,23 @@ public class Main {
 	}
 
 	private static void testRedBlackTree() {
-		RBTree<Integer> rbtree = new RBTree<>();
-		for (int i = 0; i < 100; i++) {
+		RedBlackTree<Integer> rbtree = new RedBlackTree<>();
+		for (int i = 0; i < 10; i++) {
 			Random ran = new Random();
 			HashSet<Integer> hs = new HashSet<>();
 			for (;;) {
-				int tmp = ran.nextInt(200)+1;
+				int tmp = ran.nextInt(100)+1;
 				hs.add(tmp);
-				if(hs.size() == 100) break;
+				if(hs.size() == 20) break;
 			}
 
 			for (Integer datum : hs.toArray(new Integer[0])) {
 				System.out.println("add: " + datum);
 				rbtree.add(datum);
-				BinaryTrees.println(rbtree);
+//				BinaryTrees.println(rbtree);
 				Asserts.test(rbtree.isRBTree());
 			}
-			BinaryTrees.println(rbtree);
+//			BinaryTrees.println(rbtree);
 
 			System.out.println();
 			System.out.println();
@@ -192,7 +192,7 @@ public class Main {
 			for (Integer datum : hs.toArray(new Integer[0])) {
 				System.out.println("remove: " + datum);
 				rbtree.remove(datum);
-				BinaryTrees.println(rbtree);
+//				BinaryTrees.println(rbtree);
 				Asserts.test(rbtree.isRBTree());
 			}
 

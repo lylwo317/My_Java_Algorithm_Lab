@@ -68,7 +68,7 @@ public abstract class BinaryTree<E> implements BinaryTreeInfo {
             this.stop = stop;
         }
 
-        abstract boolean visit(T element);
+        public abstract boolean visit(T element);
     }
 
     public Node<E> createNode(E element, Node<E> parent) {

@@ -3,9 +3,9 @@ package com.kevin.datastructures.tree;
 import java.util.ArrayDeque;
 import java.util.Comparator;
 import java.util.Deque;
+import java.util.Stack;
 
 /**
- * <pre>
  * 红黑树子性质：
  * 1. 根节点必须是黑色
  * 2. 节点的颜色只有红色和黑色
@@ -13,19 +13,61 @@ import java.util.Deque;
  * 4. 红色节点的子节点必须是黑色（也就是不能出现两个连续的红色）
  * 5. 从任一节点到其每个叶子(NIL节点)的所有简单路径都包含相同数目的黑色节点（也就是说黑色节点才是对应2-3-4树的高度）
  *
- * 红黑树添加删除的核心只有两个
- *
- * 空节点当做黑色节点处理的依据是。红黑树对应的2-3-4树，不管空节点还是黑节点都不是在当前的层里，所以统一当做黑色节点处理，可以节省很多不必要的判断逻辑
- * </pre>
- *
  * @param <E>
  */
-public class RBTree<E> extends BinarySearchTree<E> {
-    public RBTree() {
-    }
+public class RedBlackTree<E> {
 
-    public RBTree(Comparator<E> comparator) {
-        super(comparator);
+    private static class Node<E> {
+        E element;
+        Node<E> left;
+        Node<E> right;
+        Node<E> parent;
+
+        public Node(E element, Node<E> parent) {
+            this.element = element;
+            this.parent = parent;
+        }
+
+        public boolean isLeaf() {
+            return left == null && right == null;
+        }
+
+        public boolean isChild() {
+            return parent != null;
+        }
+
+        public boolean isLeftChild() {
+            return parent != null && parent.left == this;
+        }
+
+        public boolean hasTwoChildren() {
+            return left != null && right != null;
+        }
+
+        public boolean isRightChild() {
+            return parent != null && parent.right == this;
+        }
+
+        public Node<E> sibling() {//兄弟
+            if (isLeftChild()) {
+                return parent.right;
+            }
+
+            if (isRightChild()) {
+                return parent.left;
+            }
+
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            String parentString = "null";
+            if (parent != null) {
+                parentString = parent.element.toString();
+            }
+            return element + "_p(" + parentString + ")";
+        }
     }
 
     private static class RBNode<E> extends Node<E> {
@@ -44,94 +86,274 @@ public class RBTree<E> extends BinarySearchTree<E> {
             if (color == RED) {
                 str = "R_";
             }
-/*
-            String parentStr = null;
-            parentStr = parent == null ?  "null" : parent.element.toString();
-*/
-            return str + element.toString(); //+ "_P("+ parentStr + ")";
+            return str + element.toString();
         }
     }
 
-    private int colorOf(Node<E> node) {
-        return node == null ? RBNode.BLACK : ((RBNode<E>) node).color;
+    protected int size;
+
+    protected Node<E> root;
+
+    public boolean isEmpty() {
+        return size == 0;
     }
 
-    private boolean isBlack(Node<E> node) {
-        return colorOf(node) == RBNode.BLACK;
+    public int size() {
+        return size;
     }
 
-    private boolean isRed(Node<E> node) {
-        return colorOf(node) == RBNode.RED;
+    public void clear() {
+        root = null;
+        size = 0;
     }
 
-    private void red(Node<E> node) {
-        if (node != null) {
-            ((RBNode<E>) node).color = RBNode.RED;
+    private Comparator<E> comparator;
+
+    public RedBlackTree() {
+    }
+
+    public RedBlackTree(Comparator<E> comparator) {
+        this.comparator = comparator;
+    }
+
+    /**
+     * 添加一个元素要做一些这些：
+     * 1.检查元素是否为空，空就不添加，因为添加空的元素，无法比较大小
+     * 2.是否是第一个节点,是的话直接root = newNode
+     * 3.不是第一个节点,找到合适的位置，然后添加上去，如果发现有相同的，就直接替换
+     *
+     * @param element
+     */
+    public void add(E element){
+        if (element == null) {
+            throw new IllegalArgumentException("element must not be null");
         }
-    }
 
-    private void black(Node<E> node) {
-        if (node != null) {
-            ((RBNode<E>) node).color = RBNode.BLACK;
-        }
-    }
-
-    public boolean isRBTree() {
-        if (!isBlack(root)) {//(1)
-            return false;
+        if (root == null) {
+            root = createNode(element, null);
+            afterAdd(root);
+            size++;
+            return;
         }
 
         Node<E> node = root;
-
-        int rootNodeBlackHeight = 0;
-
-        Node<E> calHeightNode = root;
-        while (calHeightNode != null) {
-            if (isBlack(calHeightNode)) {
-                rootNodeBlackHeight++;
+        Node<E> parent;
+        int compare;
+        do {
+            compare = compare(element, node.element);
+            if (compare == 0) {
+                node.element = element;
+                return;
             }
-            calHeightNode = calHeightNode.left;
-        }
-        rootNodeBlackHeight++;
 
-        Deque<Node<E>> nodeStack = new ArrayDeque<>();
+            parent = node;
+            if (compare < 0) {
+                node = node.left;
+            } else {//compare > 0
+                node = node.right;
+            }
+        } while (node != null);
+
+        Node<E> newNode = createNode(element, parent);
+        if (compare < 0) {
+            parent.left = newNode;
+        } else {
+            parent.right = newNode;
+        }
+        afterAdd(newNode);
+        size++;
+    }
+
+    /**
+     * 找前驱节点，找比当前节点小的所有节点中最大的节点
+     *
+     * node
+     * if(有左子树）{
+     *    node.left.right.right...（左子树最右(最大)节点）
+     * } else {
+     *    //当前节点没有左子树
+     *    if(当前节点是父节点的右子节点) {//父节点就是前驱
+     *       node.parent
+     *    } else if(当前节点是父节点的左子节点){//就往祖父节点找，直到找到祖父节点的右子节点为止
+     *       node.parent.parent....(parent.right == )
+     *    } else { //没有前驱节点
+     *       return null //也就是最左边的叶子节点
+     *    }
+     * }
+     *
+     * @param node
+     * @return
+     */
+    protected Node<E> predecessor(Node<E> node) {
+        if (node == null) {
+            return null;
+        }
+
+        if (node.left != null) {
+            node = node.left;
+            while (node.right != null) {
+                node = node.right;
+            }
+            return node;
+        } else {
+            while (node.parent != null && node.parent.left == node) {
+                node = node.parent;
+            }
+
+//            if (node.parent != null) {
+//                return node.parent;
+//            } else {
+//                return null;
+//            }
+
+            //简化
+            return node.parent;
+
+        }
+    }
+
+    /**
+     * 后继节点,与前驱相反，改left 为 right 就行
+     * @param node
+     * @return
+     */
+    protected Node<E> successor(Node<E> node) {
+        if (node == null) {
+            return null;
+        }
+
+        if (node.right != null) {
+            node = node.right;
+            while (node.left != null) {
+                node = node.left;
+            }
+            return node;
+        } else {
+            while (node.parent != null && node.parent.right == node) {
+                node = node.parent;
+            }
+
+//            if (node.parent != null) {
+//                return node.parent;
+//            } else {
+//                return null;
+//            }
+
+            //简化
+            return node.parent;
+
+        }
+    }
+
+    public boolean contains(E element) {
+        return findNode(element) != null;
+    }
+
+    /**
+     *  通过，前序，中序，后序，层序遍历等手段找到元素
+     */
+    private Node<E> findNode(E element) {
+        if (element == null) {
+            return null;
+        }
+        Stack<Node<E>> nodeStack = new Stack<>();
+        Node<E> node = root;
         do {
             while (node != null) {
-                if (!node.hasTwoChildren()) {
-                    Node<E> iteratorNode = node;
-                    int blackCount = 0;
-                    int preColor = RBNode.BLACK;
-                    while (iteratorNode != null) {
-                        if (isBlack(iteratorNode)) {
-                            blackCount++;
-                        } else {
-                            if (preColor == RBNode.RED) {//(4)
-                                throw new IllegalStateException("This is not a red-black tree. Because has continues reb node at " + node);
-                            }
-
-                        }
-                        iteratorNode = iteratorNode.parent;
-                    }
-                    blackCount++;
-
-                    if (blackCount != rootNodeBlackHeight) {//(5)
-                        throw new IllegalStateException("This is not a red-black tree. " +
-                                "Because blackCount = " + blackCount + " rootNodeBlackHeight = " + rootNodeBlackHeight + " at " + node);
-                    }
-                }
-
                 nodeStack.push(node);
                 node = node.left;
             }
 
             if (!nodeStack.isEmpty()) {
                 Node<E> pop = nodeStack.pop();
+                if (pop.element.equals(element)) {
+                    return pop;
+                }
                 node = pop.right;
             }
 
         } while (node != null || !nodeStack.isEmpty());
+        return null;
+    }
 
-        return true;
+    /**
+     * 根据 element 找到Node，然后删除。
+     *
+     * @param element
+     */
+    public void remove(E element) {
+        removeNode(findNode(element));
+    }
+
+    /**
+     * 删除节点
+     *
+     * 1. 节点的度为2
+     *      找到前驱或者后继节点，然后将前驱或者后继节点覆盖当前节点，接着将前驱或者后继节点删除即可
+     * 2. 节点的度为1
+     *      删除，然后将子节点接到父节点上
+     * 3. 节点的度为0
+     *      直接删除
+     *
+     * 综上所述，本质上删除的都是度为0或者1的节点
+     *
+     */
+    private void removeNode(Node<E> node) {
+        if (node == null) {
+            return;
+        }
+        if (node.left != null && node.right != null) {//度为2的节点
+            //如果直接删除，这个时候有两棵子树就好不连接到父节点了。这个时候要连接到父节，就应该在左子树中找到最大的节点（右子树中找到最小节点）
+            //来代替原来节点的位置。（这样不但保持了二叉搜索树的性质，还解决了删除后连接到父节点的问题）
+
+            //度为2的节点就找前驱或者后继节点来替代当前节点
+            Node<E> successor = successor(node);
+            //replace
+            node.element = successor.element;
+            node = successor;//前驱或者后继节点的度必然不会是2
+        }
+
+        //叶子节点直接删除
+        if (node.isLeaf()) {//度为0的节点
+            if (node == root) {
+                root = null;
+            } else {
+                if (node.parent.left == node) {
+                    node.parent.left = null;
+                } else {
+                    node.parent.right = null;
+                }
+            }
+        } else {//度为1的节点
+            if (node == root) {//node.parent == null
+                if (node.left != null) {
+                    root = node.left;
+                } else {
+                    root = node.right;
+                }
+                root.parent = null;
+            } else {
+                Node<E> replaceNode;
+                if (node.left != null) {
+                    replaceNode = node.left;
+                } else {
+                    replaceNode = node.right;
+                }
+
+                Node<E> parent = node.parent;
+                if (parent.left == node) {
+                    parent.left = replaceNode;
+                } else {
+                    parent.right = replaceNode;
+                }
+
+                if (replaceNode != null) {
+                    replaceNode.parent = parent;
+                }
+            }
+        }
+        afterRemove(node);
+        size--;
     }
 
     private void rotateLeft(Node<E> grand) {
@@ -173,11 +395,6 @@ public class RBTree<E> extends BinarySearchTree<E> {
         parent.parent = rootNode;
     }
 
-    @Override
-    public Node<E> createNode(E element, Node<E> parent) {
-        return new RBNode<>(element, parent);
-    }
-
     /**
      * 新添加的节点默认都是--红色
      * <pre>
@@ -200,8 +417,7 @@ public class RBTree<E> extends BinarySearchTree<E> {
      *
      * @param node
      */
-    @Override
-    protected void afterAdd(Node<E> node) {
+    private void afterAdd(Node<E> node) {
         Node<E> currentNode;
         do {
             currentNode = node;
@@ -343,8 +559,7 @@ public class RBTree<E> extends BinarySearchTree<E> {
      *
      * @param node
      */
-    @Override
-    public void afterRemove(Node<E> node) {
+    private void afterRemove(Node<E> node) {
         Node<E> currentNode;
         boolean underflow = false;
         do {
@@ -452,5 +667,99 @@ public class RBTree<E> extends BinarySearchTree<E> {
                 }
             }
         } while (currentNode != node);
+    }
+
+    private int compare(E e1, E e2) {
+        if (comparator != null) {
+            return comparator.compare(e1, e2);
+        }
+
+        return ((Comparable<E>) e1).compareTo(e2);
+    }
+
+    private int colorOf(Node<E> node) {
+        return node == null ? RBNode.BLACK : ((RBNode<E>) node).color;
+    }
+
+    private boolean isBlack(Node<E> node) {
+        return colorOf(node) == RBNode.BLACK;
+    }
+
+    private boolean isRed(Node<E> node) {
+        return colorOf(node) == RBNode.RED;
+    }
+
+    private void red(Node<E> node) {
+        if (node != null) {
+            ((RBNode<E>) node).color = RBNode.RED;
+        }
+    }
+
+    private void black(Node<E> node) {
+        if (node != null) {
+            ((RBNode<E>) node).color = RBNode.BLACK;
+        }
+    }
+
+    public boolean isRBTree() {
+        if (!isBlack(root)) {//(1)
+            return false;
+        }
+
+        Node<E> node = root;
+
+        int rootNodeBlackHeight = 0;
+
+        Node<E> calHeightNode = root;
+        while (calHeightNode != null) {
+            if (isBlack(calHeightNode)) {
+                rootNodeBlackHeight++;
+            }
+            calHeightNode = calHeightNode.left;
+        }
+        rootNodeBlackHeight++;
+
+        Deque<Node<E>> nodeStack = new ArrayDeque<>();
+        do {
+            while (node != null) {
+                if (!node.hasTwoChildren()) {
+                    Node<E> iteratorNode = node;
+                    int blackCount = 0;
+                    int preColor = RBNode.BLACK;
+                    while (iteratorNode != null) {
+                        if (isBlack(iteratorNode)) {
+                            blackCount++;
+                        } else {
+                            if (preColor == RBNode.RED) {//(4)
+                                throw new IllegalStateException("This is not a red-black tree. Because has continues reb node at " + node);
+                            }
+
+                        }
+                        iteratorNode = iteratorNode.parent;
+                    }
+                    blackCount++;
+
+                    if (blackCount != rootNodeBlackHeight) {//(5)
+                        throw new IllegalStateException("This is not a red-black tree. " +
+                                "Because blackCount = " + blackCount + " rootNodeBlackHeight = " + rootNodeBlackHeight + " at " + node);
+                    }
+                }
+
+                nodeStack.push(node);
+                node = node.left;
+            }
+
+            if (!nodeStack.isEmpty()) {
+                Node<E> pop = nodeStack.pop();
+                node = pop.right;
+            }
+
+        } while (node != null || !nodeStack.isEmpty());
+
+        return true;
+    }
+
+    public Node<E> createNode(E element, Node<E> parent) {
+        return new RBNode<>(element, parent);
     }
 }
