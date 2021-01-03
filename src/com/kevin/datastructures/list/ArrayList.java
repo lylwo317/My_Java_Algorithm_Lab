@@ -138,7 +138,7 @@ public class ArrayList<T> extends AbstractList<T> {
             int newCapacity = (int) (oldCapacity * 1.5);
             elements = new Object[newCapacity];
             System.arraycopy(oldArray,0,elements,0,oldArray.length);
-            System.out.println(oldCapacity + "扩容为" + newCapacity);
+            //System.out.println(oldCapacity + "扩容为" + newCapacity);
         }
     }
 

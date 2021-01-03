@@ -22,12 +22,12 @@ public class Files {
             }
             int len = sb.length();
             if (len > 0) {
-                sb.deleteCharAt(len - 1);
+                sb.deleteCharAt(len - 1);//将最后的换换行符删除
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-		info.setFiles(info.getFiles() + 1);
+		info.setFiles(info.getFiles() + 1);//文件
 		info.setContent(sb.toString());
 		return info;
 	}
@@ -49,9 +49,9 @@ public class Files {
 			public boolean accept(File subFile) {
 				String subFilepath = subFile.getAbsolutePath();
 				if (subFile.isDirectory()) {
-					info.append(read(subFilepath, extensions));
+					info.append(read(subFilepath, extensions));//递归调用
 				} else if (extensions != null && extensions.length > 0) {
-					for (String extension : extensions) {
+					for (String extension : extensions) {//根据扩展名过滤文件
 						if (subFilepath.endsWith("." + extension)) {
 							info.append(read(subFilepath));
 							break;

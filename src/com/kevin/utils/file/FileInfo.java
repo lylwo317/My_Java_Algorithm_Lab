@@ -6,7 +6,7 @@ public class FileInfo {
 	private String content = "";
 	
 	public String[] words() {
-		return content.split("[^a-zA-Z]+");
+		return content.split("[^a-zA-Z]+");//分割单词
 	}
 	
 	public int getFiles() {
@@ -33,7 +33,7 @@ public class FileInfo {
 		this.content = content;
 	}
 
-	public FileInfo append(FileInfo info) {
+	public FileInfo append(FileInfo info) {//累加统计
 		if (info != null && info.lines > 0) {
 			this.files += info.files;
 			this.lines += info.lines;
