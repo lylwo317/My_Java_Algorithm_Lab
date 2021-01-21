@@ -1,7 +1,6 @@
 package com.kevin.datastructures.tree;
 
 import com.kevin.datastructures.tree.printer.BinaryTreeInfo;
-import com.sun.istack.internal.Nullable;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -459,5 +458,5 @@ public abstract class BinaryTree<E> implements BinaryTreeInfo {
 
     public abstract void add(E element);
 
-    public abstract void remove(@Nullable E element);
+    public abstract void remove(E element);
 }

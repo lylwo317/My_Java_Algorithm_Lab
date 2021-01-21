@@ -1,7 +1,5 @@
 package com.kevin.datastructures.tree;
 
-import com.sun.istack.internal.Nullable;
-
 import java.util.Comparator;
 import java.util.Stack;
 
@@ -87,7 +85,7 @@ public class BinarySearchTree<E> extends BinaryTree<E> {
      * @param element
      */
     @Override
-    public void remove(@Nullable E element) {
+    public void remove(E element) {
         removeNode(findNode(element));
     }
 
@@ -104,7 +102,7 @@ public class BinarySearchTree<E> extends BinaryTree<E> {
      * 综上所述，本质上删除的都是度为0或者1的节点
      *
      */
-    private void removeNode(@Nullable Node<E> node) {
+    private void removeNode(Node<E> node) {
         if (node == null) {
             return;
         }

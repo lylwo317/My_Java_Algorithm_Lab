@@ -42,7 +42,7 @@ public class RBTree<E> extends BinarySearchTree<E> {
         public String toString() {
             String str = "";
             if (color == RED) {
-                str = "R_";
+                str = "<<R>>_";
             }
 /*
             String parentStr = null;

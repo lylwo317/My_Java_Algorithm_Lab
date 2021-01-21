@@ -1,7 +1,5 @@
 package com.kevin.jdk;
 
-import sun.misc.SharedSecrets;
-
 import java.time.DayOfWeek;
 import java.util.EnumSet;
 
