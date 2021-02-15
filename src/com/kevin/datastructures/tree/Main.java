@@ -2,11 +2,12 @@ package com.kevin.datastructures.tree;
 
 
 import com.kevin.datastructures.Asserts;
+import com.kevin.datastructures.set.HashSet;
+import com.kevin.datastructures.set.Set;
 import com.kevin.datastructures.tree.other.RBTree2;
 import com.kevin.datastructures.tree.other.RedAndBlackTree;
 import com.kevin.datastructures.tree.printer.BinaryTrees;
 
-import java.util.HashSet;
 import java.util.Random;
 
 @SuppressWarnings("unused")
@@ -172,7 +173,7 @@ public class Main {
 		RBTree2<Integer> rbtree = new RBTree2<>();
 		for (int i = 0; i < 10; i++) {
 			Random ran = new Random();
-			HashSet<Integer> hs = new HashSet<>();
+			java.util.HashSet<Integer> hs = new java.util.HashSet<>();
 			for (;;) {
 				int tmp = ran.nextInt(1000)+1;
 				hs.add(tmp);
@@ -207,7 +208,7 @@ public class Main {
 		RBTree<Integer> rbtree = new RBTree<>();
 		for (int i = 0; i < 10; i++) {
 			Random ran = new Random();
-			HashSet<Integer> hs = new HashSet<>();
+			java.util.HashSet<Integer> hs = new java.util.HashSet<>();
 			for (;;) {
 				int tmp = ran.nextInt(1000)+1;
 				hs.add(tmp);
@@ -260,6 +261,23 @@ public class Main {
 //		BinaryTrees.println(rbTree);
 //	}
 
+	private static void testHashSet() {
+		HashSet<Integer> set = new HashSet<>();
+
+		set.add(1);
+		set.add(2);
+		set.add(2);
+		set.add(3);
+		set.add(3);
+
+		set.traversal(new Set.Visitor<>() {
+			@Override
+			public boolean visit(Integer element) {
+				System.out.println(element);
+				return false;
+			}
+		});
+	}
 	public static void main(String[] args) {
 /*
 	    testHeight();
@@ -269,7 +287,7 @@ public class Main {
 		testAVL();
         testRedBlackTree();
 */
-		testRedBlackTree();
+		testHashSet();
 	}
 
 }
