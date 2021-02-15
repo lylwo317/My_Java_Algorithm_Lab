@@ -2,6 +2,8 @@ package com.kevin.datastructures.tree;
 
 
 import com.kevin.datastructures.Asserts;
+import com.kevin.datastructures.tree.other.RBTree2;
+import com.kevin.datastructures.tree.other.RedAndBlackTree;
 import com.kevin.datastructures.tree.printer.BinaryTrees;
 
 import java.util.HashSet;
@@ -164,7 +166,10 @@ public class Main {
 	}
 
 	private static void testRedBlackTree() {
-		RedBlackTree<Integer> rbtree = new RedBlackTree<>();
+//		RedBlackTree<Integer> rbtree = new RedBlackTree<>();
+//		com.kevin.datastructures.tree.other.RBTree<Integer> rbtree = new com.kevin.datastructures.tree.other.RBTree<>();
+//		RedAndBlackTree<Integer> rbtree = new RedAndBlackTree<>();
+		RBTree2<Integer> rbtree = new RBTree2<>();
 		for (int i = 0; i < 10; i++) {
 			Random ran = new Random();
 			HashSet<Integer> hs = new HashSet<>();
@@ -176,9 +181,9 @@ public class Main {
 
 			for (Integer datum : hs.toArray(new Integer[0])) {
 				System.out.println("add: " + datum);
-				rbtree.add(datum);
-//				BinaryTrees.println(rbtree);
-				Asserts.test(rbtree.isRBTree());
+				rbtree.insert(datum);
+				BinaryTrees.println(rbtree);
+				rbtree.checkRBTreeProperties();
 			}
 //			BinaryTrees.println(rbtree);
 
@@ -190,9 +195,10 @@ public class Main {
 			for (Integer datum : hs.toArray(new Integer[0])) {
 				System.out.println("remove: " + datum);
 				rbtree.remove(datum);
-//				BinaryTrees.println(rbtree);
-				Asserts.test(rbtree.isRBTree());
+				BinaryTrees.println(rbtree);
+				rbtree.checkRBTreeProperties();
 			}
+//			Asserts.test(rbtree. == 0);
 
 		}
 	}

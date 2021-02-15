@@ -1,32 +1,31 @@
 package com.kevin.datastructures.tree;
 
-import java.util.ArrayDeque;
-import java.util.Comparator;
-import java.util.Deque;
-import java.util.Stack;
+import java.util.*;
 
 /**
- * 红黑树子性质：
+ * 红黑树五条性质：
  * 1. 根节点必须是黑色
  * 2. 节点的颜色只有红色和黑色
- * 3. 叶子节点(NIL节点)都是黑色
+ * 3. NIL节点都是黑色
  * 4. 红色节点的子节点必须是黑色（也就是不能出现两个连续的红色）
  * 5. 从任一节点到其每个叶子(NIL节点)的所有简单路径都包含相同数目的黑色节点（也就是说黑色节点才是对应2-3-4树的高度）
  *
+ * Author: Kevin Xie
+ * Email: lylwo317@gmail.com
  * @param <E>
  */
 public class RedBlackTree<E> {
 
-    private static class Node<E> {
-        E element;
-        Node<E> left;
-        Node<E> right;
-        Node<E> parent;
+    private static class RBNode<E> {
+        public static int RED = 0;
+        public static int BLACK = 1;
 
-        public Node(E element, Node<E> parent) {
-            this.element = element;
-            this.parent = parent;
-        }
+        private int color = RED;
+
+        E element;
+        RBNode<E> left;
+        RBNode<E> right;
+        RBNode<E> parent;
 
         public boolean isLeaf() {
             return left == null && right == null;
@@ -48,7 +47,7 @@ public class RedBlackTree<E> {
             return parent != null && parent.right == this;
         }
 
-        public Node<E> sibling() {//兄弟
+        public RBNode<E> sibling() {//兄弟
             if (isLeftChild()) {
                 return parent.right;
             }
@@ -60,39 +59,29 @@ public class RedBlackTree<E> {
             return null;
         }
 
+        public RBNode(E element, RBNode<E> parent) {
+            this.element = element;
+            this.parent = parent;
+        }
+
         @Override
         public String toString() {
             String parentString = "null";
             if (parent != null) {
                 parentString = parent.element.toString();
             }
-            return element + "_p(" + parentString + ")";
-        }
-    }
-
-    private static class RBNode<E> extends Node<E> {
-        public static int RED = 0;
-        public static int BLACK = 1;
-
-        private int color = RED;
-
-        public RBNode(E element, Node<E> parent) {
-            super(element, parent);
-        }
-
-        @Override
-        public String toString() {
+            String nodeStr =  element + "_p(" + parentString + ")";
             String str = "";
             if (color == RED) {
                 str = "R_";
             }
-            return str + element.toString();
+            return str + nodeStr;
         }
     }
 
     protected int size;
 
-    protected Node<E> root;
+    protected RBNode<E> root;
 
     public boolean isEmpty() {
         return size == 0;
@@ -136,8 +125,8 @@ public class RedBlackTree<E> {
             return;
         }
 
-        Node<E> node = root;
-        Node<E> parent;
+        RBNode<E> node = root;
+        RBNode<E> parent;
         int compare;
         do {
             compare = compare(element, node.element);
@@ -154,7 +143,7 @@ public class RedBlackTree<E> {
             }
         } while (node != null);
 
-        Node<E> newNode = createNode(element, parent);
+        RBNode<E> newNode = createNode(element, parent);
         if (compare < 0) {
             parent.left = newNode;
         } else {
@@ -184,7 +173,7 @@ public class RedBlackTree<E> {
      * @param node
      * @return
      */
-    protected Node<E> predecessor(Node<E> node) {
+    protected RBNode<E> predecessor(RBNode<E> node) {
         if (node == null) {
             return null;
         }
@@ -217,7 +206,7 @@ public class RedBlackTree<E> {
      * @param node
      * @return
      */
-    protected Node<E> successor(Node<E> node) {
+    protected RBNode<E> successor(RBNode<E> node) {
         if (node == null) {
             return null;
         }
@@ -252,12 +241,12 @@ public class RedBlackTree<E> {
     /**
      *  通过，前序，中序，后序，层序遍历等手段找到元素
      */
-    private Node<E> findNode(E element) {
+    private RBNode<E> findNode(E element) {
         if (element == null) {
             return null;
         }
-        Stack<Node<E>> nodeStack = new Stack<>();
-        Node<E> node = root;
+        Stack<RBNode<E>> nodeStack = new Stack<>();
+        RBNode<E> node = root;
         do {
             while (node != null) {
                 nodeStack.push(node);
@@ -265,7 +254,7 @@ public class RedBlackTree<E> {
             }
 
             if (!nodeStack.isEmpty()) {
-                Node<E> pop = nodeStack.pop();
+                RBNode<E> pop = nodeStack.pop();
                 if (pop.element.equals(element)) {
                     return pop;
                 }
@@ -298,7 +287,7 @@ public class RedBlackTree<E> {
      * 综上所述，本质上删除的都是度为0或者1的节点
      *
      */
-    private void removeNode(Node<E> node) {
+    private void removeNode(RBNode<E> node) {
         if (node == null) {
             return;
         }
@@ -307,7 +296,7 @@ public class RedBlackTree<E> {
             //来代替原来节点的位置。（这样不但保持了二叉搜索树的性质，还解决了删除后连接到父节点的问题）
 
             //度为2的节点就找前驱或者后继节点来替代当前节点
-            Node<E> successor = successor(node);
+            RBNode<E> successor = successor(node);
             //replace
             node.element = successor.element;
             node = successor;//前驱或者后继节点的度必然不会是2
@@ -333,14 +322,14 @@ public class RedBlackTree<E> {
                 }
                 root.parent = null;
             } else {
-                Node<E> replaceNode;
+                RBNode<E> replaceNode;
                 if (node.left != null) {
                     replaceNode = node.left;
                 } else {
                     replaceNode = node.right;
                 }
 
-                Node<E> parent = node.parent;
+                RBNode<E> parent = node.parent;
                 if (parent.left == node) {
                     parent.left = replaceNode;
                 } else {
@@ -356,10 +345,10 @@ public class RedBlackTree<E> {
         size--;
     }
 
-    private void rotateLeft(Node<E> grand) {
-        Node<E> rootNode = grand.parent;
-        Node<E> parent = grand.right;
-        Node<E> subTree = parent.left;
+    private void rotateLeft(RBNode<E> grand) {
+        RBNode<E> rootNode = grand.parent;
+        RBNode<E> parent = grand.right;
+        RBNode<E> subTree = parent.left;
 
         parent.left = grand;
         grand.right = subTree;
@@ -367,10 +356,10 @@ public class RedBlackTree<E> {
         afterRotate(rootNode, grand, parent, subTree);
     }
 
-    private void rotateRight(Node<E> grand) {
-        Node<E> rootNode = grand.parent;
-        Node<E> parent = grand.left;
-        Node<E> subTree = parent.right;
+    private void rotateRight(RBNode<E> grand) {
+        RBNode<E> rootNode = grand.parent;
+        RBNode<E> parent = grand.left;
+        RBNode<E> subTree = parent.right;
 
         parent.right = grand;
         grand.left = subTree;
@@ -378,7 +367,7 @@ public class RedBlackTree<E> {
         afterRotate(rootNode, grand, parent, subTree);
     }
 
-    private void afterRotate(Node<E> rootNode, Node<E> grand, Node<E> parent, Node<E> subTree) {
+    private void afterRotate(RBNode<E> rootNode, RBNode<E> grand, RBNode<E> parent, RBNode<E> subTree) {
         if (grand.isLeftChild()) {
             rootNode.left = parent;
         } else if (grand.isRightChild()) {
@@ -417,8 +406,8 @@ public class RedBlackTree<E> {
      *
      * @param node
      */
-    private void afterAdd(Node<E> node) {
-        Node<E> currentNode;
+    private void afterAdd(RBNode<E> node) {
+        RBNode<E> currentNode;
         do {
             currentNode = node;
             if (node.parent == null) {//添加到根节点，或者上溢到根节点
@@ -426,8 +415,8 @@ public class RedBlackTree<E> {
                 black(node);
             } else {//非根节点
                 if (isRed(node.parent)) {//parent 是红色
-                    Node<E> grand = node.parent.parent;
-                    Node<E> parent = node.parent;
+                    RBNode<E> grand = node.parent.parent;
+                    RBNode<E> parent = node.parent;
                     if (isBlack(parent.sibling())) {//叔父节点是空或者黑色。没有溢出
                         //旋转操作
                         red(grand);
@@ -448,14 +437,12 @@ public class RedBlackTree<E> {
                             }
                             rotateLeft(grand);
                         }
-//                        black(grand.parent);
                     } else {//叔父节点红色，溢出
                         // 红 <- 黑 -> 红 -> new红, new红 <- 红 <- 黑 -> 红
                         red(grand);
                         black(parent.sibling());
                         black(parent);
                         node = grand;//不使用递归
-//                        afterAdd(grand);
                     }
                 } else {//parent 是黑色
                     //直接添加，不用调整修复。就满足了红黑树的性质
@@ -559,8 +546,8 @@ public class RedBlackTree<E> {
      *
      * @param node
      */
-    private void afterRemove(Node<E> node) {
-        Node<E> currentNode;
+    private void afterRemove(RBNode<E> node) {
+        RBNode<E> currentNode;
         boolean underflow = false;
         do {
             currentNode = node;
@@ -586,8 +573,8 @@ public class RedBlackTree<E> {
                     if (underflow || isBlack(node.left) && isBlack(node.right)) {
                         underflow = false;
                         //需要找兄弟节点借，如果兄弟节点没有，就找父节点借，节点会下溢
-                        Node<E> parent = node.parent;
-                        Node<E> sibling;
+                        RBNode<E> parent = node.parent;
+                        RBNode<E> sibling;
                         if (parent.hasTwoChildren()) {//在下溢的时候
                             sibling = node.isLeftChild() ? parent.right : parent.left;
                         } else {//在正常删除节点的时候，必然有一个子节点
@@ -669,6 +656,7 @@ public class RedBlackTree<E> {
         } while (currentNode != node);
     }
 
+    @SuppressWarnings("unchecked")
     private int compare(E e1, E e2) {
         if (comparator != null) {
             return comparator.compare(e1, e2);
@@ -677,89 +665,120 @@ public class RedBlackTree<E> {
         return ((Comparable<E>) e1).compareTo(e2);
     }
 
-    private int colorOf(Node<E> node) {
-        return node == null ? RBNode.BLACK : ((RBNode<E>) node).color;
+    private int colorOf(RBNode<E> node) {
+        return node == null ? RBNode.BLACK : node.color;
     }
 
-    private boolean isBlack(Node<E> node) {
+    private boolean isBlack(RBNode<E> node) {
         return colorOf(node) == RBNode.BLACK;
     }
 
-    private boolean isRed(Node<E> node) {
+    private boolean isRed(RBNode<E> node) {
         return colorOf(node) == RBNode.RED;
     }
 
-    private void red(Node<E> node) {
+    private void red(RBNode<E> node) {
         if (node != null) {
-            ((RBNode<E>) node).color = RBNode.RED;
+            node.color = RBNode.RED;
         }
     }
 
-    private void black(Node<E> node) {
+    private void black(RBNode<E> node) {
         if (node != null) {
-            ((RBNode<E>) node).color = RBNode.BLACK;
+            node.color = RBNode.BLACK;
         }
     }
 
-    public boolean isRBTree() {
-        if (!isBlack(root)) {//(1)
-            return false;
+    /**
+     * 检查当前红黑树是否符合红黑树的第1,4,5点性质
+     */
+    public void checkRBTreeProperties() {
+        if (!isBlack(root)) {//不符合性质(1)
+            throw new IllegalStateException("root node color isn't black. root = " + root);
         }
 
-        Node<E> node = root;
+        if (root == null) {
+            return;
+        }
 
+        //黑节点数量
         int rootNodeBlackHeight = 0;
 
-        Node<E> calHeightNode = root;
+        RBNode<E> calHeightNode = root;
         while (calHeightNode != null) {
             if (isBlack(calHeightNode)) {
                 rootNodeBlackHeight++;
             }
             calHeightNode = calHeightNode.left;
         }
-        rootNodeBlackHeight++;
+        rootNodeBlackHeight++;//加入NIL节点到统计的总数中
 
-        Deque<Node<E>> nodeStack = new ArrayDeque<>();
-        do {
-            while (node != null) {
-                if (!node.hasTwoChildren()) {
-                    Node<E> iteratorNode = node;
-                    int blackCount = 0;
-                    int preColor = RBNode.BLACK;
-                    while (iteratorNode != null) {
-                        if (isBlack(iteratorNode)) {
-                            blackCount++;
-                        } else {
-                            if (preColor == RBNode.RED) {//(4)
-                                throw new IllegalStateException("This is not a red-black tree. Because has continues reb node at " + node);
-                            }
+        Queue<RBNode<E>> nodeQueue = new LinkedList<>();
+        nodeQueue.offer(root);
+        while (!nodeQueue.isEmpty()) {
 
+            RBNode<E> node = nodeQueue.poll();
+
+            if (!node.hasTwoChildren()) {//计算度为1或者度为0的节点到根节点的黑色节点数量是否等于rootNodeBlackHeight，以及是否存在两个连续红色节点
+                RBNode<E> iteratorNode = node;
+                int blackCount = 0;
+                int preColor = RBNode.BLACK;
+                while (iteratorNode != null) {//往根节点遍历，看是否存在连续两个红色节点
+                    if (isBlack(iteratorNode)) {
+                        blackCount++;//统计黑色节点数量
+                    } else {//当前遍历的节点是红色
+                        if (preColor == RBNode.RED) {//前一个节点也是红色，不满足性质(4)
+                            throw new IllegalStateException("This is not a red-black tree. Because has continues reb node at " + node);
                         }
-                        iteratorNode = iteratorNode.parent;
                     }
-                    blackCount++;
-
-                    if (blackCount != rootNodeBlackHeight) {//(5)
-                        throw new IllegalStateException("This is not a red-black tree. " +
-                                "Because blackCount = " + blackCount + " rootNodeBlackHeight = " + rootNodeBlackHeight + " at " + node);
-                    }
+                    preColor = iteratorNode.color;
+                    iteratorNode = iteratorNode.parent;
                 }
+                blackCount++;//加入NIL节点到统计的总数中
 
-                nodeStack.push(node);
-                node = node.left;
+                if (blackCount != rootNodeBlackHeight) {//黑色节点数量不相等，不满足性质(5)
+                    throw new IllegalStateException("This is not a red-black tree. " +
+                            "Because blackCount = " + blackCount + " rootNodeBlackHeight = " + rootNodeBlackHeight + " at " + node);
+                }
             }
 
-            if (!nodeStack.isEmpty()) {
-                Node<E> pop = nodeStack.pop();
-                node = pop.right;
+            if (node.left != null) {
+                nodeQueue.offer(node.left);
             }
 
-        } while (node != null || !nodeStack.isEmpty());
-
-        return true;
+            if (node.right != null) {
+                nodeQueue.offer(node.right);
+            }
+        }
     }
 
-    public Node<E> createNode(E element, Node<E> parent) {
+    public RBNode<E> createNode(E element, RBNode<E> parent) {
         return new RBNode<>(element, parent);
+    }
+
+    public static void main(String[] args) {
+        RedBlackTree<Integer> rbtree = new RedBlackTree<>();
+		for (int i = 0; i < 10; i++) {
+			Random ran = new Random();
+			HashSet<Integer> hs = new HashSet<>();
+			for (;;) {
+				int tmp = ran.nextInt(1000)+1;
+				hs.add(tmp);
+				if(hs.size() == 100) break;
+			}
+
+			for (Integer datum : hs.toArray(new Integer[0])) {
+				System.out.println("add: " + datum);
+				rbtree.add(datum);
+				rbtree.checkRBTreeProperties();
+			}
+
+			for (Integer datum : hs.toArray(new Integer[0])) {
+				System.out.println("remove: " + datum);
+				rbtree.remove(datum);
+                rbtree.checkRBTreeProperties();
+			}
+
+		}
     }
 }
