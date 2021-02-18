@@ -1,20 +1,43 @@
 package com.kevin.datastructures.tree;
 
+import com.kevin.datastructures.tree.printer.BinaryTreeInfo;
+import com.kevin.datastructures.tree.printer.BinaryTrees;
+
 import java.util.*;
 
 /**
  * 红黑树五条性质：
  * 1. 根节点必须是黑色
  * 2. 节点的颜色只有红色和黑色
- * 3. NIL节点都是黑色
+ * 3. 叶子节点（NIL)节点都是黑色
  * 4. 红色节点的子节点必须是黑色（也就是不能出现两个连续的红色）
- * 5. 从任一节点到其每个叶子(NIL节点)的所有简单路径都包含相同数目的黑色节点（也就是说黑色节点才是对应2-3-4树的高度）
+ * 5. 从任一节点到其每个叶子（NIL）节点的所有简单路径都包含相同数目的黑色节点（也就是说黑色节点才是对应2-3-4树的高度）
  *
  * Author: Kevin Xie
  * Email: lylwo317@gmail.com
  * @param <E>
  */
-public class RedBlackTree<E> {
+public class RedBlackTree<E> implements BinaryTreeInfo {
+
+    @Override
+    public Object root() {
+        return root;
+    }
+
+    @Override
+    public Object left(Object node) {
+        return ((RBNode<E>)node).left;
+    }
+
+    @Override
+    public Object right(Object node) {
+        return ((RBNode<E>) node).right;
+    }
+
+    @Override
+    public Object string(Object node) {
+        return node;
+    }
 
     private static class RBNode<E> {
         public static int RED = 0;
@@ -303,6 +326,10 @@ public class RedBlackTree<E> {
         }
 
         //叶子节点直接删除
+
+        RBNode<E> child = null;
+        RBNode<E> parent = null;
+
         if (node.isLeaf()) {//度为0的节点
             if (node == root) {
                 root = null;
@@ -312,6 +339,7 @@ public class RedBlackTree<E> {
                 } else {
                     node.parent.right = null;
                 }
+                parent = node.parent;
             }
         } else {//度为1的节点
             if (node == root) {//node.parent == null
@@ -321,6 +349,7 @@ public class RedBlackTree<E> {
                     root = node.right;
                 }
                 root.parent = null;
+                child = root;
             } else {
                 RBNode<E> replaceNode;
                 if (node.left != null) {
@@ -328,21 +357,56 @@ public class RedBlackTree<E> {
                 } else {
                     replaceNode = node.right;
                 }
+                child = replaceNode;
 
-                RBNode<E> parent = node.parent;
-                if (parent.left == node) {
-                    parent.left = replaceNode;
+                RBNode<E> p = node.parent;
+                parent = p;
+                if (p.left == node) {
+                    p.left = replaceNode;
                 } else {
-                    parent.right = replaceNode;
+                    p.right = replaceNode;
                 }
 
                 if (replaceNode != null) {
-                    replaceNode.parent = parent;
+                    replaceNode.parent = p;
                 }
             }
         }
-        afterRemove(node);
+//        afterRemove(node);
+        if (isBlack(node)) {
+            afterRemove(child, parent);
+        }
         size--;
+    }
+
+    private void rotateLeftAndUpdateRoot(RBNode<E> grand) {
+        RBNode<E> rootNode = grand.parent;
+        RBNode<E> parent = grand.right;
+        RBNode<E> subTree = parent.left;
+
+        parent.left = grand;
+        grand.right = subTree;
+
+        afterRotate(rootNode, grand, parent, subTree);
+
+        if (rootNode == null) {
+            root = parent;
+        }
+    }
+
+    private void rotateRightAndUpdateRoot(RBNode<E> grand) {
+        RBNode<E> rootNode = grand.parent;
+        RBNode<E> parent = grand.left;
+        RBNode<E> subTree = parent.right;
+
+        parent.right = grand;
+        grand.left = subTree;
+
+        afterRotate(rootNode, grand, parent, subTree);
+
+        if (rootNode == null) {
+            root = parent;
+        }
     }
 
     private void rotateLeft(RBNode<E> grand) {
@@ -449,6 +513,86 @@ public class RedBlackTree<E> {
                 }
             }
         } while (currentNode != node);
+    }
+
+    /**
+     * 另一种修复删除红黑树的方法
+     *
+     * 问：什么情况需要修复？（换句话说也就是什么情况会破坏红黑树的性质）
+     * 答：被删除节点是黑色，就需要修复。因为黑色节点删除，必然会导致不满足红黑树性质5。
+     *
+     *
+     *
+     * @param nodeX 代替被删除节点位置的子节点
+     * @param nodeXParent 被删除节点的父节点
+     */
+    private void afterRemove(RBNode<E> nodeX, RBNode<E> nodeXParent) {
+        while (isBlack(nodeX) && nodeX != root) {
+            if (nodeXParent.left == nodeX) {//兄弟在右边
+                RBNode<E> sibling = nodeXParent.right;
+                if (isRed(sibling)) {//兄弟是红色，也就是说不在对应的2-3-4树的同一层。通过旋转将红色兄弟的黑色儿子变成兄弟
+                    black(sibling);
+                    red(nodeXParent);
+                    rotateLeftAndUpdateRoot(nodeXParent);
+                    sibling = nodeXParent.right;
+                }
+
+                if (isBlack(sibling.left) && isBlack(sibling.right)) {//兄弟没得借。也就是对应2-3-4树下溢的情况。也就是向父节点借
+                    red(sibling);
+                    //black(nodeXParent);
+                    nodeX = nodeXParent;
+                    nodeXParent = nodeX.parent;
+                } else {//兄弟必然有红色子节点，可以跟兄弟借
+                    if (isBlack(sibling.right)) {//右边没有红色子节点，就通过旋转来使得右边有红色子节点
+                        black(sibling.left);
+                        red(sibling);
+                        rotateRightAndUpdateRoot(sibling);
+                        sibling = nodeXParent.right;
+                    }
+
+                    //到这里，兄弟右边必然有红色子节点
+                    black(sibling.right);
+                    sibling.color = colorOf(nodeXParent);
+                    black(nodeXParent);
+                    rotateLeftAndUpdateRoot(nodeXParent);
+                    //结束循环。
+                    break;
+                }
+            } else {//兄弟在左边
+                RBNode<E> sibling = nodeXParent.left;
+                if (isRed(sibling)) {//兄弟是红色，也就是说不在对应的2-3-4的同一层。通过旋转将红色兄弟的黑色儿子变成兄弟
+                    black(sibling);
+                    red(nodeXParent);
+                    rotateRightAndUpdateRoot(nodeXParent);
+                    sibling = nodeXParent.left;
+                }
+
+                if (isBlack(sibling.left) && isBlack(sibling.right)) {//兄弟没得借。也就是对应2-3-4树下溢的情况。也就是向父节点借
+                    red(sibling);
+                    //black(nodeXParent);
+                    nodeX = nodeXParent;
+                    nodeXParent = nodeX.parent;
+                } else {//兄弟必然有红色子节点，可以跟兄弟借
+                    if (isBlack(sibling.left)) {//左边没有红色子节点，就通过旋转来使得右边有红色子节点
+                        black(sibling.right);
+                        red(sibling);
+                        rotateLeftAndUpdateRoot(sibling);
+                        sibling = nodeXParent.left;
+                    }
+
+                    //到这里，兄弟左边必然有红色子节点
+                    black(sibling.left);
+                    sibling.color = colorOf(nodeXParent);
+                    black(nodeXParent);
+                    rotateRightAndUpdateRoot(nodeXParent);
+                    //要停止循环了，不要再继续了
+//                    nodeX = root;
+                    break;
+                }
+            }
+        }
+
+        black(nodeX);
     }
 
     /**
@@ -758,24 +902,26 @@ public class RedBlackTree<E> {
 
     public static void main(String[] args) {
         RedBlackTree<Integer> rbtree = new RedBlackTree<>();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 1000; i++) {
 			Random ran = new Random();
 			HashSet<Integer> hs = new HashSet<>();
 			for (;;) {
-				int tmp = ran.nextInt(1000)+1;
+				int tmp = ran.nextInt(5000)+1;
 				hs.add(tmp);
-				if(hs.size() == 100) break;
+				if(hs.size() == 1000) break;
 			}
 
 			for (Integer datum : hs.toArray(new Integer[0])) {
-				System.out.println("add: " + datum);
+//				System.out.println("add: " + datum);
 				rbtree.add(datum);
+//                BinaryTrees.println(rbtree);
 				rbtree.checkRBTreeProperties();
 			}
 
 			for (Integer datum : hs.toArray(new Integer[0])) {
-				System.out.println("remove: " + datum);
+//				System.out.println("remove: " + datum);
 				rbtree.remove(datum);
+//                BinaryTrees.println(rbtree);
                 rbtree.checkRBTreeProperties();
 			}
 

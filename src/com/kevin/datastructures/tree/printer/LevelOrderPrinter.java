@@ -188,31 +188,31 @@ public class LevelOrderPrinter extends Printer {
 		for (int i = rowCount - 2; i >= 0; i--) {
 			List<Node> rowNodes = nodes.get(i);
 			for (Node node : rowNodes) {
-				Node left = node.left;
-				Node right = node.right;
-				if (left == null && right == null) continue;
-				if (left != null && right != null) {
+				Node leftChild = node.left;
+				Node rightChild = node.right;
+				if (leftChild == null && rightChild == null) continue;
+				if (leftChild != null && rightChild != null) {
 					// 让左右节点对称
-					node.balance(left, right);
+					node.balance(leftChild, rightChild);
 
 					// left和right之间可以挪动的最小间距
 					int leftEmpty = node.leftBoundEmptyLength();
 					int rightEmpty = node.rightBoundEmptyLength();
 					int empty = Math.min(leftEmpty, rightEmpty);
-					empty = Math.min(empty, (right.x - left.rightX()) >> 1);
+					empty = Math.min(empty, (rightChild.x - leftChild.rightX()) >> 1);
 
-					// left、right的子节点之间可以挪动的最小间距
-					int space = left.minLevelSpaceToRight(right) - MIN_SPACE;
+					// leftChild、right的子节点之间可以挪动的最小间距
+					int space = leftChild.minLevelSpaceToRight(rightChild) - MIN_SPACE;
 					space = Math.min(space >> 1, empty);
 
-					// left、right往中间挪动
+					// leftChild、right往中间挪动
 					if (space > 0) {
-						left.translateX(space);
-						right.translateX(-space);
+						leftChild.translateX(space);
+						rightChild.translateX(-space);
 					}
 
 					// 继续挪动
-					space = left.minLevelSpaceToRight(right) - MIN_SPACE;
+					space = leftChild.minLevelSpaceToRight(rightChild) - MIN_SPACE;
 					if (space < 1) continue;
 
 					// 可以继续挪动的间距
@@ -221,14 +221,14 @@ public class LevelOrderPrinter extends Printer {
 					if (leftEmpty < 1 && rightEmpty < 1) continue;
 
 					if (leftEmpty > rightEmpty) {
-						left.translateX(Math.min(leftEmpty, space));
+						leftChild.translateX(Math.min(leftEmpty, space));
 					} else {
-						right.translateX(-Math.min(rightEmpty, space));
+						rightChild.translateX(-Math.min(rightEmpty, space));
 					}
-				} else if (left != null) {
-					left.translateX(node.leftBoundEmptyLength());
-				} else { // right != null
-					right.translateX(-node.rightBoundEmptyLength());
+				} else if (leftChild != null) {
+					leftChild.translateX(node.leftBoundEmptyLength());
+				} else { // rightChild != null
+					rightChild.translateX(-node.rightBoundEmptyLength());
 				}
 			}
 		}
@@ -339,8 +339,8 @@ public class LevelOrderPrinter extends Printer {
 			init(string);
 		}
 
-		public Node(Object btNode, BinaryTreeInfo opetaion) {
-			init(opetaion.string(btNode).toString());
+		public Node(Object btNode, BinaryTreeInfo binaryTreeInfo) {
+			init(binaryTreeInfo.string(btNode).toString());
 
 			this.btNode = btNode;
 		}

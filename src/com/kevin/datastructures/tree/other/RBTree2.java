@@ -486,73 +486,73 @@ public class RBTree2<T extends Comparable<T>> implements BinaryTreeInfo {
      *     node 待修正的节点
      */
     private void removeFixUp(RBTNode<T> node, RBTNode<T> parent) {
-        RBTNode<T> other;
+        RBTNode<T> sibling;
 
-        while ((node==null || isBlack(node)) && (node != this.mRoot)) {
+        while ((node==null || isBlack(node)) && (node != this.mRoot)) {//黑 removedNode and 黑 childNode
             if (parent.left == node) {
-                other = parent.right;
-                if (isRed(other)) {
+                sibling = parent.right;
+                if (isRed(sibling)) {
                     // Case 1: x的兄弟w是红色的
-                    setBlack(other);
+                    setBlack(sibling);
                     setRed(parent);
                     leftRotate(parent);
-                    other = parent.right;
+                    sibling = parent.right;
                 }
 
-                if ((other.left==null || isBlack(other.left)) &&
-                        (other.right==null || isBlack(other.right))) {
+                if ((sibling.left==null || isBlack(sibling.left)) &&
+                        (sibling.right==null || isBlack(sibling.right))) {
                     // Case 2: x的兄弟w是黑色，且w的俩个孩子也都是黑色的
-                    setRed(other);
-                    node = parent;
+                    setRed(sibling);
+                    node = parent;//parent必须是黑色，如果是黑色就
                     parent = parentOf(node);
                 } else {
 
-                    if (other.right==null || isBlack(other.right)) {
+                    if (sibling.right==null || isBlack(sibling.right)) {//RL
                         // Case 3: x的兄弟w是黑色的，并且w的左孩子是红色，右孩子为黑色。
-                        setBlack(other.left);
-                        setRed(other);
-                        rightRotate(other);
-                        other = parent.right;
+                        setBlack(sibling.left);
+                        setRed(sibling);
+                        rightRotate(sibling);
+                        sibling = parent.right;
                     }
                     // Case 4: x的兄弟w是黑色的；并且w的右孩子是红色的，左孩子任意颜色。
-                    setColor(other, colorOf(parent));
+                    setColor(sibling, colorOf(parent));
                     setBlack(parent);
-                    setBlack(other.right);
+                    setBlack(sibling.right);
                     leftRotate(parent);
                     node = this.mRoot;
                     break;
                 }
             } else {
 
-                other = parent.left;
-                if (isRed(other)) {
+                sibling = parent.left;
+                if (isRed(sibling)) {
                     // Case 1: x的兄弟w是红色的
-                    setBlack(other);
+                    setBlack(sibling);
                     setRed(parent);
                     rightRotate(parent);
-                    other = parent.left;
+                    sibling = parent.left;
                 }
 
-                if ((other.left==null || isBlack(other.left)) &&
-                        (other.right==null || isBlack(other.right))) {
+                if ((sibling.left==null || isBlack(sibling.left)) &&
+                        (sibling.right==null || isBlack(sibling.right))) {
                     // Case 2: x的兄弟w是黑色，且w的俩个孩子也都是黑色的
-                    setRed(other);
+                    setRed(sibling);
                     node = parent;
                     parent = parentOf(node);
                 } else {
 
-                    if (other.left==null || isBlack(other.left)) {
+                    if (sibling.left==null || isBlack(sibling.left)) {//LR
                         // Case 3: x的兄弟w是黑色的，并且w的左孩子是红色，右孩子为黑色。
-                        setBlack(other.right);
-                        setRed(other);
-                        leftRotate(other);
-                        other = parent.left;
+                        setBlack(sibling.right);
+                        setRed(sibling);
+                        leftRotate(sibling);
+                        sibling = parent.left;
                     }
 
                     // Case 4: x的兄弟w是黑色的；并且w的右孩子是红色的，左孩子任意颜色。
-                    setColor(other, colorOf(parent));
+                    setColor(sibling, colorOf(parent));
                     setBlack(parent);
-                    setBlack(other.left);
+                    setBlack(sibling.left);
                     rightRotate(parent);
                     node = this.mRoot;
                     break;
