@@ -278,6 +278,34 @@ public class Main {
 			}
 		});
 	}
+
+	private static void testTrie() {
+		Trie<Integer> trie = new Trie<>();
+		trie.add("cat", 1);
+		trie.add("dog", 2);
+		trie.add("catalog", 3);
+		trie.add("谢天谢地", 4);
+		trie.add("cast", 5);
+		Asserts.test(trie.size() == 5);
+		Asserts.test(trie.startWith("cat"));
+		Asserts.test(trie.startWith("do"));
+		Asserts.test(!trie.startWith("dag"));
+		Asserts.test(trie.startWith("cat"));
+		Asserts.test(!trie.startWith("黄"));
+		Asserts.test(trie.startWith("谢"));
+		Asserts.test(trie.contains("谢天谢地"));
+		Asserts.test(!trie.contains("谢天谢"));
+		Asserts.test(trie.remove("cat") == 1);
+		Asserts.test(trie.startWith("cat"));
+		Asserts.test(trie.get("cat") == null);
+		Asserts.test(!trie.contains("cat"));
+		Asserts.test(trie.contains("catalog"));
+		Asserts.test(trie.remove("catalog") == 3);
+		Asserts.test(!trie.contains("catalog"));
+		Asserts.test(trie.size() == 3);
+		Asserts.test(trie.get(null) == null);
+	}
+
 	public static void main(String[] args) {
 /*
 	    testHeight();
@@ -286,8 +314,9 @@ public class Main {
 		testRemove();
 		testAVL();
         testRedBlackTree();
-*/
 		testHashSet();
+*/
+        testTrie();
 	}
 
 }
