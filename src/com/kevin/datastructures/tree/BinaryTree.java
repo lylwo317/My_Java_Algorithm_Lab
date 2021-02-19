@@ -149,6 +149,10 @@ public abstract class BinaryTree<E> implements BinaryTreeInfo {
         } while (node != null || !nodeStack.isEmpty());
     }
 
+    /**
+     * 中序遍历，递归
+     * @param visitor
+     */
     public void inorderRecursion(Visitor<E> visitor) {
         inorderRecursion(root, visitor);
     }
@@ -170,6 +174,10 @@ public abstract class BinaryTree<E> implements BinaryTreeInfo {
         inorderRecursion(node.right, visitor);
     }
 
+    /**
+     * 中序遍历，非递归
+     * @param visitor
+     */
     public void inorderIteration(Visitor<E> visitor) {
         inorderIteration(root, visitor);
     }
@@ -198,6 +206,10 @@ public abstract class BinaryTree<E> implements BinaryTreeInfo {
         } while (node != null || !nodeStack.isEmpty());
     }
 
+    /**
+     * 后序遍历，递归
+     * @param visitor
+     */
     public void postorderRecursion(Visitor<E> visitor) {
         postorderRecursion(root, visitor);
     }
@@ -220,6 +232,10 @@ public abstract class BinaryTree<E> implements BinaryTreeInfo {
         visitor.stop = visitor.visit(node.element);
     }
 
+    /**
+     * 后序遍历，非递归
+     * @param visitor
+     */
     public void postorderIteration(Visitor<E> visitor) {
         postorderIteration(root, visitor);
     }

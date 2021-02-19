@@ -529,7 +529,8 @@ public class RedBlackTree<E> implements BinaryTreeInfo {
     private void afterRemove(RBNode<E> nodeX, RBNode<E> nodeXParent) {
         while (isBlack(nodeX) && nodeX != root) {
             if (nodeXParent.left == nodeX) {//兄弟在右边
-                RBNode<E> sibling = nodeXParent.right;
+                RBNode<E> sibling = nodeXParent.right;//w
+                //case 1
                 if (isRed(sibling)) {//兄弟是红色，也就是说不在对应的2-3-4树的同一层。通过旋转将红色兄弟的黑色儿子变成兄弟
                     black(sibling);
                     red(nodeXParent);
@@ -537,12 +538,14 @@ public class RedBlackTree<E> implements BinaryTreeInfo {
                     sibling = nodeXParent.right;
                 }
 
+                //case 2
                 if (isBlack(sibling.left) && isBlack(sibling.right)) {//兄弟没得借。也就是对应2-3-4树下溢的情况。也就是向父节点借
                     red(sibling);
                     //black(nodeXParent);
                     nodeX = nodeXParent;
                     nodeXParent = nodeX.parent;
                 } else {//兄弟必然有红色子节点，可以跟兄弟借
+                    //case 3
                     if (isBlack(sibling.right)) {//右边没有红色子节点，就通过旋转来使得右边有红色子节点
                         black(sibling.left);
                         red(sibling);
@@ -550,6 +553,7 @@ public class RedBlackTree<E> implements BinaryTreeInfo {
                         sibling = nodeXParent.right;
                     }
 
+                    //case 4
                     //到这里，兄弟右边必然有红色子节点
                     black(sibling.right);
                     sibling.color = colorOf(nodeXParent);
