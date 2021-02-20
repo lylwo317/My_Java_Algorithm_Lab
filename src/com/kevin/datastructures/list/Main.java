@@ -2,6 +2,7 @@ package com.kevin.datastructures.list;
 
 import com.kevin.datastructures.Asserts;
 import com.kevin.datastructures.list.circle.CircleLinkedList;
+import com.kevin.datastructures.list.circle.SingleCircleLinkedList;
 import com.kevin.datastructures.list.singlelinked.SingleLinkedList2;
 
 public class Main {
@@ -10,6 +11,7 @@ public class Main {
 //        testLinkedList();
         testList(new LinkedList<>());
         testList(new CircleLinkedList<>());
+        testList(new SingleCircleLinkedList<>());
         josephus();
     }
 
