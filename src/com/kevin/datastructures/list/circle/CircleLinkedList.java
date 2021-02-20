@@ -1,15 +1,18 @@
-package com.kevin.datastructures.list;
+package com.kevin.datastructures.list.circle;
+
+import com.kevin.datastructures.list.AbstractList;
 
 import java.util.Objects;
 
 /**
- * 双向链表
+ * 双向循环链表
  * Created by: kevin
- * Date: 2021-02-19
+ * Date: 2021-02-20
  */
-public class LinkedList<E> extends AbstractList<E> {
+public class CircleLinkedList<E> extends AbstractList<E> {
     private Node<E> first;
     private Node<E> last;
+    private Node<E> current;
 
     private static class Node<E>{
         Node<E> prev;
@@ -28,22 +31,48 @@ public class LinkedList<E> extends AbstractList<E> {
         }
     }
 
+    public void reset() {
+        current = first;
+    }
+
+    public E next() {
+        if (current == null) {
+            return null;
+        }
+        current = current.next;
+        return current.element;
+    }
+
+    public E remove() {
+        if (current == null) {
+            return null;
+        }
+
+        Node<E> next = current.next;
+        E element = remove(current);
+        if (size != 0) {
+            current = next;
+        }
+        return element;
+    }
+
     @Override
     public void clear() {
         size = 0;
         first = null;
         last = null;
+        current = null;
     }
 
     @Override
     public E get(int index) {
-        checkIndex(index);
+        checkRange(index);
         Node<E> node = findNode(index);
         return node != null ? node.element : null;
     }
 
     private Node<E> findNode(int index) {
-        checkIndex(index);
+        checkRange(index);
         //根据index的位置是靠前还是靠后来决定是从first开始找，还是从last开始找
         Node<E> current;
         if (index >= size / 2) {
@@ -62,7 +91,7 @@ public class LinkedList<E> extends AbstractList<E> {
         return current;
     }
 
-    private void checkIndex(int index) {
+    private void checkRange(int index) {
         if (index >= size || index < 0) {
             throw new IndexOutOfBoundsException("Size = " + size + ", Index = " + index);
         }
@@ -88,20 +117,20 @@ public class LinkedList<E> extends AbstractList<E> {
             if (last == null) {//添加第一个节点
                 last = newNode;
                 first = last;
-            } else {
+            } else {//添加到last之后
                 last.next = newNode;
                 last = newNode;
             }
+            first.prev = last;
+            newNode.next = first;
         } else {
             Node<E> current = findNode(index);
 
             Node<E> newNode = new Node<>(current.prev, current, element);
-            if (current.prev != null) {
-                current.prev.next = newNode;
-            } else {
+            if (current == first) {
                 first = newNode;
             }
-
+            current.prev.next = newNode;
             current.prev = newNode;
         }
         size++;
@@ -109,24 +138,37 @@ public class LinkedList<E> extends AbstractList<E> {
 
     @Override
     public E remove(int index) {
-        Node<E> node = findNode(index);
+        return remove(findNode(index));
+    }
+
+    private E remove(Node<E> node) {
+        if (node == null) {
+            return null;
+        }
+
         Node<E> prev = node.prev;
         Node<E> next = node.next;
 
-        if (next != null) {
-            next.prev = prev;
-        } else {
-           last = prev;
-        }
+        if (first == last) {
+            clear();
+        }else{
+            if (node == last) {
+                last = prev;
+            }
 
-        if (prev != null) {
+            if (node == first) {
+                first = next;
+            }
+
+            next.prev = prev;
+
             prev.next = next;
-        } else {
-            first = next;
+
+            size--;
         }
-        size--;
         return node.element;
     }
+
 
     @Override
     public int indexOf(E element) {
@@ -134,20 +176,16 @@ public class LinkedList<E> extends AbstractList<E> {
 
         Node<E> current = first;
         int index = 0;
-        while (current != null) {
+        do {
 //            if( (element == element.v) || (a != null && a.equals(b)))
             if (Objects.equals(element, current.element)) {
-                break;
+                return index;
             }
             current = current.next;
             index++;
-        }
+        } while (current != first);
 
-        if (current == null) {
-            return ELEMENT_NOT_FOUND;
-        } else {
-            return index;
-        }
+        return ELEMENT_NOT_FOUND;
 
     }
 

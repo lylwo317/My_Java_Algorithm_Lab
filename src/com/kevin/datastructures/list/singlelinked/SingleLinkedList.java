@@ -1,11 +1,9 @@
-package com.kevin.datastructures.list;
+package com.kevin.datastructures.list.singlelinked;
 
-/**
- * 虚拟头节点
- * @param <E>
- */
-public class LinkedList2<E> extends AbstractList<E> {
-    private Node<E> first = new Node<>();
+import com.kevin.datastructures.list.AbstractList;
+
+public class SingleLinkedList<E> extends AbstractList<E> {
+    private Node<E> first;
 
     private static class Node<E>{
         E element;
@@ -40,11 +38,15 @@ public class LinkedList2<E> extends AbstractList<E> {
         //找到index - 1元素，然后将该元素的next连接到新的node节点，新的node节点的next连接到原来的index节点
         Node<E> newNode = new Node<>();
         newNode.element = element;
-
-        Node<E> prev;
-        prev = (index == 0 ? first : node(index - 1));
-        newNode.next = prev.next;
-        prev.next = newNode;
+        if (index == 0) {//如果index是0，会有问题，需要特殊处理
+            newNode.next = first;
+            first = newNode;
+        } else {
+            Node<E> prev;
+            prev = node(index - 1);
+            newNode.next = prev.next;
+            prev.next = newNode;
+        }
 
         size++;
     }
@@ -54,9 +56,14 @@ public class LinkedList2<E> extends AbstractList<E> {
         rangeForCheck(index);
 
         Node<E> removeNode;
-        Node<E> prev = index == 0 ? first : node(index - 1);
-        removeNode = prev.next;
-        prev.next = removeNode.next;
+        if (index == 0) {
+            removeNode = first;
+            first = first.next;
+        } else {
+            Node<E> prev = node(index - 1);
+            removeNode = prev.next;
+            prev.next = removeNode.next;
+        }
         size--;
         return removeNode.element;
     }
@@ -64,7 +71,7 @@ public class LinkedList2<E> extends AbstractList<E> {
     @Override
     public int indexOf(E element) {
         if (element == null) {
-            Node<E> node = first.next;
+            Node<E> node = first;
             for (int i = 0; i < size; i++) {
                 if (node.element == null) {
                     return i;
@@ -73,7 +80,7 @@ public class LinkedList2<E> extends AbstractList<E> {
             }
 
         } else {
-            Node<E> node = first.next;
+            Node<E> node = first;
             for (int i = 0; i < size; i++) {
                 if (element.equals(node.element)) {
                     return i;
@@ -91,7 +98,7 @@ public class LinkedList2<E> extends AbstractList<E> {
      */
     private Node<E> node(int index){
         rangeForCheck(index);
-        Node<E> node = first.next;
+        Node<E> node = first;
         for (int i = 0; i < index; i++) {
             node = node.next;
         }
@@ -101,7 +108,7 @@ public class LinkedList2<E> extends AbstractList<E> {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("size = " + size + ", [");
-        Node<E> node = first.next;
+        Node<E> node = first;
         while (node != null) {
             s.append(node.element);
             if (node.next != null) {

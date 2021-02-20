@@ -1,10 +1,10 @@
 package com.kevin.datastructures.queue;
 
-import com.kevin.datastructures.list.LinkedList;
+import com.kevin.datastructures.list.singlelinked.SingleLinkedList;
 import com.kevin.datastructures.list.List;
 
 public class Queue<E> {
-	private List<E> list = new LinkedList<>();
+	private List<E> list = new SingleLinkedList<>();
 	
 	public int size() {
 		return list.size();

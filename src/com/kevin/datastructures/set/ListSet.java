@@ -1,7 +1,6 @@
 package com.kevin.datastructures.set;
 
-import com.kevin.datastructures.list.ArrayList;
-import com.kevin.datastructures.list.LinkedList;
+import com.kevin.datastructures.list.singlelinked.SingleLinkedList;
 import com.kevin.datastructures.list.List;
 
 public class ListSet<E> implements Set<E> {
@@ -9,7 +8,7 @@ public class ListSet<E> implements Set<E> {
     private List<E> list;
 
     public ListSet() {
-        list = new LinkedList<>();
+        list = new SingleLinkedList<>();
     }
 
     @Override

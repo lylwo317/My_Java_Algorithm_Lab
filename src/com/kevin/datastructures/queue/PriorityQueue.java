@@ -2,8 +2,6 @@ package com.kevin.datastructures.queue;
 
 import com.kevin.datastructures.heap.BinaryHeap;
 import com.kevin.datastructures.heap.Heap;
-import com.kevin.datastructures.list.LinkedList;
-import com.kevin.datastructures.list.List;
 
 import java.util.Comparator;
 

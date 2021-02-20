@@ -40,6 +40,9 @@ public class ArrayList<T> extends AbstractList<T> {
         return old;
     }
 
+    /**
+     * size小于容量的1/2，缩容
+     */
     private void trim() {
         //30
         int oldCapacity = elements.length;
