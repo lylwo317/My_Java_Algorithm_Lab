@@ -143,7 +143,8 @@ public class RedBlackTree<E> implements BinaryTreeInfo {
 
         if (root == null) {
             root = createNode(element, null);
-            afterAdd(root);
+//            afterAdd(root);
+            afterAdd2(root);
             size++;
             return;
         }
@@ -172,7 +173,8 @@ public class RedBlackTree<E> implements BinaryTreeInfo {
         } else {
             parent.right = newNode;
         }
-        afterAdd(newNode);
+//        afterAdd(newNode);
+        afterAdd2(newNode);
         size++;
     }
 
@@ -374,7 +376,7 @@ public class RedBlackTree<E> implements BinaryTreeInfo {
         }
 //        afterRemove(node);
         if (isBlack(node)) {
-            afterRemove(child, parent);
+            afterRemove2(child, parent);
         }
         size--;
     }
@@ -516,17 +518,79 @@ public class RedBlackTree<E> implements BinaryTreeInfo {
     }
 
     /**
-     * 另一种修复删除红黑树的方法
+     * 通过维护红黑树性质来修复添加操作
+     *
+     * 问：什么情况需要修复？（换句话说也就是什么情况会破坏红黑树的性质）
+     * 答：被添加节点的父节点是红色，或者被添加节点是根节点，就需要修复。
+     *
+     * @param
+     */
+    private void afterAdd2(RBNode<E> newNode) {
+        RBNode<E> parent = newNode.parent;
+        RBNode<E> grandParent;
+        while ((parent != null && isRed(parent)) && parent != root) {
+            grandParent = parent.parent;
+
+            RBNode<E> sibling;
+            if (parent.isLeftChild()) {
+                sibling = parent.sibling();
+                if (newNode.isRightChild()) {
+                    swapColor(parent, newNode);
+                    rotateLeftAndUpdateRoot(parent);
+                    parent = newNode;
+                }
+                if (isBlack(sibling)) {
+                    black(parent);
+                    red(grandParent);
+                    rotateRightAndUpdateRoot(grandParent);
+                    break;
+                } else {//isRed(sibling)
+                    red(grandParent);
+                    black(parent);
+                    black(sibling);
+                    newNode = grandParent;
+                    parent = newNode.parent;
+                }
+            } else {
+                sibling = parent.sibling();
+                if (newNode.isLeftChild()) {
+                    swapColor(parent, newNode);
+                    rotateRightAndUpdateRoot(parent);
+                    parent = newNode;
+                }
+                if (isBlack(sibling)) {
+                    black(parent);
+                    red(grandParent);
+                    rotateLeftAndUpdateRoot(grandParent);
+                    break;
+                } else {//isRed(sibling)
+                    red(grandParent);
+                    black(parent);
+                    black(sibling);
+                    newNode = grandParent;
+                    parent = newNode.parent;
+                }
+            }
+        }
+        black(root);
+    }
+
+    private void swapColor(RBNode<E> nodeA, RBNode<E> nodeB) {
+        int pColor = nodeA.color;
+        nodeA.color = nodeB.color;
+        nodeB.color = pColor;
+    }
+
+    /**
+     * 通过维护红黑树性质来修复删除操作
      *
      * 问：什么情况需要修复？（换句话说也就是什么情况会破坏红黑树的性质）
      * 答：被删除节点是黑色，就需要修复。因为黑色节点删除，必然会导致不满足红黑树性质5。
      *
-     *
-     *
      * @param nodeX 代替被删除节点位置的子节点
      * @param nodeXParent 被删除节点的父节点
      */
-    private void afterRemove(RBNode<E> nodeX, RBNode<E> nodeXParent) {
+    private void afterRemove2(RBNode<E> nodeX, RBNode<E> nodeXParent) {
         while (isBlack(nodeX) && nodeX != root) {
             if (nodeXParent.left == nodeX) {//兄弟在右边
                 RBNode<E> sibling = nodeXParent.right;//w
@@ -910,20 +974,20 @@ public class RedBlackTree<E> implements BinaryTreeInfo {
 			Random ran = new Random();
 			HashSet<Integer> hs = new HashSet<>();
 			for (;;) {
-				int tmp = ran.nextInt(5000)+1;
+				int tmp = ran.nextInt(1000)+1;
 				hs.add(tmp);
-				if(hs.size() == 1000) break;
+				if(hs.size() == 100) break;
 			}
 
 			for (Integer datum : hs.toArray(new Integer[0])) {
-//				System.out.println("add: " + datum);
+				System.out.println("add: " + datum);
 				rbtree.add(datum);
 //                BinaryTrees.println(rbtree);
 				rbtree.checkRBTreeProperties();
 			}
 
 			for (Integer datum : hs.toArray(new Integer[0])) {
-//				System.out.println("remove: " + datum);
+				System.out.println("remove: " + datum);
 				rbtree.remove(datum);
 //                BinaryTrees.println(rbtree);
                 rbtree.checkRBTreeProperties();

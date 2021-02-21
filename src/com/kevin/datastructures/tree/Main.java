@@ -270,7 +270,7 @@ public class Main {
 		set.add(3);
 		set.add(3);
 
-		set.traversal(new Set.Visitor<>() {
+		set.traversal(new Set.Visitor<Integer>() {
 			@Override
 			public boolean visit(Integer element) {
 				System.out.println(element);
