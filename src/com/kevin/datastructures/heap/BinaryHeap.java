@@ -237,6 +237,10 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements BinaryTreeInfo {
     @Override
     public Object string(Object node) {
         E element = elements[(int) node];
-        return Objects.requireNonNullElse(element, "Empty");
+        if (element == null) {
+            return "Empty";
+        } else {
+            return element;
+        }
     }
 }
