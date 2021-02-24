@@ -1,7 +1,7 @@
 package com.kevin.datastructures.queue;
 
 /**
- *
+ * 双向循环队列
  */
 public class CircleDeque<E> {
 
