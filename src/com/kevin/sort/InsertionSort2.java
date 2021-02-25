@@ -38,7 +38,7 @@ public class InsertionSort2<T extends Comparable<T>> extends Sort<T> {
         int begin = 0;
         int end = index;
         while (begin < end) {
-            int mid = (begin + end) >> 1;
+            int mid = (begin + end) >>> 1;
             if (compare(index, mid) < 0) {
                 end = mid;
             } else {//index >= mid
