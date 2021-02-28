@@ -1,0 +1,83 @@
+package com.kevin.sort;
+
+/**
+ * 快速排序
+ *
+ * 最好：O(nlog n)
+ * 最坏：O(n^2)
+ * 平均：O(nlog n)
+ *
+ * Created by: kevin
+ * Date: 2021-02-28
+ */
+public class QuickSort<T extends Comparable<T>> extends Sort<T>{
+    @Override
+    protected void sort() {
+        quickSort(0, array.length);
+    }
+
+    /**
+     * 递归版本
+     *
+     * 平均
+     *
+     * 如果轴点比较中间
+     * T(n) = 2 * T(n/2) + O(n) = O(nlog n) + O(n)
+     *
+     * 最坏时间复杂度
+     * 如果轴点在的位置在最右边，类似选择排序
+     * T(n) = T(n-1) + O(n) = O(n^2)
+     *      = O(n-1) + O(n-2) + ... + O(1) = O(n^2)
+     *
+     * @param begin
+     * @param end
+     */
+    private void quickSort(int begin, int end) {
+        if (end - begin < 2) {//至少有两个才需要排序
+           return;
+        }
+
+        int mid = pivotIndex(begin, end);
+
+        quickSort(begin, mid);
+        quickSort(mid + 1, end);
+    }
+
+    /**
+     * O(n)
+     * @param begin
+     * @param end
+     * @return
+     */
+    private int pivotIndex(int begin, int end) {
+        swap(begin, begin + (int)(Math.random() * (end - begin)));
+        T pivot = array[begin];
+        end--;
+
+        while (begin < end) {//
+            while (begin < end) {//右边
+                if (compare(array[end], pivot) > 0) {//注意这里等于也要移动，不然轴点数据就不够均匀
+                    end--;
+                } else {//>=
+                    //移动到左边
+                    array[begin++] = array[end];
+                    break;
+                }
+            }
+
+            while (begin < end) {//左边
+                if (compare(array[begin], pivot) < 0) {
+                    begin++;
+                } else {//>=
+                    //移动到右边
+                    array[end--] = array[begin];
+                    break;
+                }
+            }
+        }
+
+        //begin == end
+        array[begin] = pivot;
+        return begin;
+    }
+}
