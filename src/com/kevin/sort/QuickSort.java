@@ -1,5 +1,8 @@
 package com.kevin.sort;
 
+import java.util.Deque;
+import java.util.LinkedList;
+
 /**
  * 快速排序
  *
@@ -13,7 +16,35 @@ package com.kevin.sort;
 public class QuickSort<T extends Comparable<T>> extends Sort<T>{
     @Override
     protected void sort() {
-        quickSort(0, array.length);
+//        quickSort1(0, array.length);
+        quickSort2();
+    }
+
+    /**
+     * 非递归版本
+     */
+    private void quickSort2() {
+        if (array.length <= 1) {
+            return;
+        }
+
+        Deque<Integer> stack = new LinkedList<>(); // 用栈模拟递归的方法调用栈
+        stack.push(array.length);//end
+        stack.push(0);//start
+
+        while (!stack.isEmpty()) {
+            int begin = stack.pop();
+            int end = stack.pop();
+            int mid = pivotIndex(begin, end);
+            if (mid + 1 < end) {
+                stack.push(end);
+                stack.push(mid + 1);
+            }
+            if (begin < mid) {
+                stack.push(mid);
+                stack.push(begin);
+            }
+        }
     }
 
     /**
@@ -32,15 +63,15 @@ public class QuickSort<T extends Comparable<T>> extends Sort<T>{
      * @param begin
      * @param end
      */
-    private void quickSort(int begin, int end) {
+    private void quickSort1(int begin, int end) {
         if (end - begin < 2) {//至少有两个才需要排序
            return;
         }
 
-        int mid = pivotIndex(begin, end);
+        int mid = pivotIndex(begin, end);//先执行，然后再分成两部分执行
 
-        quickSort(begin, mid);
-        quickSort(mid + 1, end);
+        quickSort1(begin, mid);
+        quickSort1(mid + 1, end);
     }
 
     /**
