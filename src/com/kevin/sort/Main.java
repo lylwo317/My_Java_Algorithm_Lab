@@ -12,12 +12,14 @@ public class Main {
 //        Integer[] array = {7, 3, 5, 8, 6, 7, 4, 5};
         testSort(array,
 //                new BubbleSort<>(),
+                new JdkSort<>(),
+                new QuickSort<>(),
                 new HeapSort<>(),
 //                new SelectionSort<>(),
 //                new InsertionSort1<>(),
                 new InsertionSort2<>(),
                 new MergeSort<>(),
-                new QuickSort<>()
+                new ShellSort<>()
         );
     }
 

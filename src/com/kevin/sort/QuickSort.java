@@ -1,14 +1,18 @@
 package com.kevin.sort;
 
-import java.util.Deque;
-import java.util.LinkedList;
-
 /**
  * 快速排序
+ *
+ * 时间复杂度
  *
  * 最好：O(nlog n)
  * 最坏：O(n^2)
  * 平均：O(nlog n)
+ *
+ *
+ * 空间复杂度
+ *
+ * O(n) = O(log n)
  *
  * Created by: kevin
  * Date: 2021-02-28
@@ -18,6 +22,7 @@ public class QuickSort<T extends Comparable<T>> extends Sort<T>{
     protected void sort() {
 //        quickSort1(0, array.length);
         quickSort2();
+//        quickSort3(0, array.length - 1);
     }
 
     /**
@@ -28,9 +33,29 @@ public class QuickSort<T extends Comparable<T>> extends Sort<T>{
             return;
         }
 
+        int[] stack = new int[array.length];
+        int top = -1;
+        stack[++top] = array.length;
+        stack[++top] = 0;
+
+        while (top >= 0) {
+            int begin = stack[top--];
+            int end = stack[top--];
+            int mid = pivotIndex(begin, end);
+            if (mid + 1 < end) {
+                stack[++top] = end;
+                stack[++top] = mid + 1;
+            }
+            if (begin < mid) {
+                stack[++top] = mid;
+                stack[++top] = begin;
+            }
+        }
+/*
         Deque<Integer> stack = new LinkedList<>(); // 用栈模拟递归的方法调用栈
         stack.push(array.length);//end
         stack.push(0);//start
+
 
         while (!stack.isEmpty()) {
             int begin = stack.pop();
@@ -45,6 +70,7 @@ public class QuickSort<T extends Comparable<T>> extends Sort<T>{
                 stack.push(begin);
             }
         }
+*/
     }
 
     /**

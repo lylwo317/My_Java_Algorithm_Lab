@@ -77,7 +77,7 @@ public abstract class Sort<T extends Comparable<T>> implements Comparable<Sort<T
     }
 
     public boolean isStable() {
-        if (this instanceof QuickSort) {
+        if (this instanceof QuickSort || this instanceof ShellSort) {
             return false;
         }
         Element[] elements = new Element[100];
