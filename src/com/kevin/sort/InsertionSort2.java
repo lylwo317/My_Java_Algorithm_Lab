@@ -1,11 +1,13 @@
 package com.kevin.sort;
 
-import java.util.Collections;
-
 /**
  * 插入排序
  *
  * 将无序部分的第一个值拿出来，插入到前面有序的部分。相对于选择排序，不要求是最大值，比较次数相对较少，但是移动元素次数相对较多
+ *
+ * 最好：O(n)
+ * 最坏：O(n^2)
+ * 平均：O(n^2)
  *
  * @param <T>
  */
@@ -30,7 +32,9 @@ public class InsertionSort2<T extends Comparable<T>> extends Sort<T> {
 
     /**
      * 二分搜索
-     * 从index往
+     * 从index往前找。这里的index前面都是有序的数组
+     * 时间复杂度：
+     * T(n) = O(log n)
      * @param index
      * @return
      */

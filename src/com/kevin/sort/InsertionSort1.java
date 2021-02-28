@@ -9,12 +9,21 @@ package com.kevin.sort;
  */
 public class InsertionSort1<T extends Comparable<T>> extends Sort<T> {
 
+    /**
+     * 时间复杂度
+     *
+     * 最好时间复杂度：O(n)
+     * 最坏时间复杂度：O(n^2)
+     * 平均时间复杂度：O(n^2)
+     *
+     * 空间复杂度：O(1)
+     */
     @Override
     protected void sort() {
-        for (int begin = 1; begin < array.length; begin++) {
+        for (int begin = 1; begin < array.length; begin++) {//O(n)
             int cur = begin;
             T v = array[cur];
-            while (cur > 0 && compare(v, array[cur - 1]) < 0) {
+            while (cur > 0 && compare(v, array[cur - 1]) < 0) {//最坏：O(n), 最好：O(1), 平均：O(n)
                 array[cur] = array[cur - 1];
                 cur--;
             }
