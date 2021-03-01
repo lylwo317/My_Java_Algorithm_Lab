@@ -51,7 +51,5 @@ public class UnionFind_QU_Rank extends UnionFind_QU {
             parents[parent1] = parent2;
             ranks[parent2] += 1;
         }
-
-
     }
 }
