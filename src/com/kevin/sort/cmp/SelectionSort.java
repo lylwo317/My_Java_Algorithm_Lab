@@ -1,4 +1,6 @@
-package com.kevin.sort;
+package com.kevin.sort.cmp;
+
+import com.kevin.sort.Sort;
 
 /**
  * 选择排序
@@ -11,7 +13,7 @@ package com.kevin.sort;
  *
  * @param <T>
  */
-public class SelectionSort<T extends Comparable<T>> extends Sort<T>{
+public class SelectionSort<T extends Comparable<T>> extends Sort<T> {
     @Override
     protected void sort() {
 /*

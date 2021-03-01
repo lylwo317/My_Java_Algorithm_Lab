@@ -1,4 +1,6 @@
-package com.kevin.sort;
+package com.kevin.sort.cmp;
+
+import com.kevin.sort.Sort;
 
 /**
  * 归并排序
@@ -10,7 +12,7 @@ package com.kevin.sort;
  * Created by: kevin
  * Date: 2021-02-27
  */
-public class MergeSort<T extends Comparable<T>> extends Sort<T>{
+public class MergeSort<T extends Comparable<T>> extends Sort<T> {
     private T[] leftArray;
 
     @Override

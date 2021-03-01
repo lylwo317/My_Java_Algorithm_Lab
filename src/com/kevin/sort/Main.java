@@ -1,6 +1,7 @@
 package com.kevin.sort;
 
 import com.kevin.datastructures.Asserts;
+import com.kevin.sort.cmp.*;
 import com.kevin.utils.Integers;
 
 import java.util.Arrays;
@@ -8,18 +9,19 @@ import java.util.Arrays;
 public class Main {
     public static void main(String[] args) {
 
-        Integer[] array = Integers.random(10000, 1, 100);
-//        Integer[] array = {7, 3, 5, 8, 6, 7, 4, 5};
+//        Integer[] array = Integers.random(10000, 1, 100);
+        Integer[] array = {7, 3, 5, 8, 6, 7, 4, 5};
         testSort(array,
 //                new BubbleSort<>(),
-                new JdkSort<>(),
-                new QuickSort<>(),
-                new HeapSort<>(),
+//                new JdkSort<>(),
+//                new QuickSort<>(),
+//                new HeapSort<>(),
 //                new SelectionSort<>(),
 //                new InsertionSort1<>(),
-                new InsertionSort2<>(),
-                new MergeSort<>(),
-                new ShellSort<>()
+//                new InsertionSort2<>(),
+//                new MergeSort<>(),
+                new CountingSort()
+//                new ShellSort<>()
         );
     }
 
@@ -28,7 +30,7 @@ public class Main {
 //            System.out.println("Class : " + integerSort.getClass().getSimpleName());
             Integer[] newArray = Integers.copy(array);
             integerSort.sort(newArray);
-//            Integers.println(newArray);
+            Integers.println(newArray);
             Asserts.test(Integers.isAscOrder(newArray));
         }
 

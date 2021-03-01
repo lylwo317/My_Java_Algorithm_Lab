@@ -1,4 +1,6 @@
-package com.kevin.sort;
+package com.kevin.sort.cmp;
+
+import com.kevin.sort.Sort;
 
 /**
  * 插入排序

@@ -1,4 +1,6 @@
-package com.kevin.sort;
+package com.kevin.sort.cmp;
+
+import com.kevin.sort.Sort;
 
 /**
  * 快速排序
@@ -17,7 +19,7 @@ package com.kevin.sort;
  * Created by: kevin
  * Date: 2021-02-28
  */
-public class QuickSort<T extends Comparable<T>> extends Sort<T>{
+public class QuickSort<T extends Comparable<T>> extends Sort<T> {
     @Override
     protected void sort() {
 //        quickSort1(0, array.length);

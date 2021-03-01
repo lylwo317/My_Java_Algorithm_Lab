@@ -1,5 +1,8 @@
 package com.kevin.sort;
 
+import com.kevin.sort.cmp.QuickSort;
+import com.kevin.sort.cmp.ShellSort;
+
 import java.text.DecimalFormat;
 
 public abstract class Sort<T extends Comparable<T>> implements Comparable<Sort<T>> {
@@ -80,6 +83,11 @@ public abstract class Sort<T extends Comparable<T>> implements Comparable<Sort<T
         if (this instanceof QuickSort || this instanceof ShellSort) {
             return false;
         }
+
+        if (this instanceof CountingSort) {
+            return true;
+        }
+
         Element[] elements = new Element[100];
         for (int i = 0; i < elements.length; i++) {
             elements[i] = new Element(i * 10, 10);

@@ -1,4 +1,6 @@
-package com.kevin.sort;
+package com.kevin.sort.cmp;
+
+import com.kevin.sort.Sort;
 
 /**
  * 冒泡排序
@@ -9,7 +11,7 @@ package com.kevin.sort;
  *
  * @param <T>
  */
-public class BubbleSort<T extends Comparable<T>> extends Sort<T>{
+public class BubbleSort<T extends Comparable<T>> extends Sort<T> {
 
     /**
      * 优化前
