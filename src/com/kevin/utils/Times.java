@@ -19,8 +19,8 @@ public class Times {
 		task.execute();
 		long end = System.currentTimeMillis();
 		System.out.println("结束：" + fmt.format(new Date()));
-		double delta = (end - begin) / 1000.0;
-		System.out.println("耗时：" + delta + "秒");
+		double delta = end - begin;
+		System.out.println("耗时：" + (delta / 1000.0) + "秒" + "(" + delta + "ms)");
 		System.out.println("-------------------------------------");
 	}
 }
