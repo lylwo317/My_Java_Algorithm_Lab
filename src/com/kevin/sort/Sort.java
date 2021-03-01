@@ -84,7 +84,7 @@ public abstract class Sort<T extends Comparable<T>> implements Comparable<Sort<T
             return false;
         }
 
-        if (this instanceof CountingSort) {
+        if (this instanceof CountingSort || this instanceof RadixSort) {
             return true;
         }
 

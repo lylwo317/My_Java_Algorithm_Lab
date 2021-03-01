@@ -10,7 +10,8 @@ public class Main {
     public static void main(String[] args) {
 
 //        Integer[] array = Integers.random(10000, 1, 100);
-        Integer[] array = {7, 3, 5, 8, 6, 7, 4, 5};
+//        Integer[] array = {7, 3, 5, 8, 6, 7, 4, 5};
+        Integer[] array = {7234, 32, 532, 8, 6, 76, 43, 5234};
         testSort(array,
 //                new BubbleSort<>(),
 //                new JdkSort<>(),
@@ -20,7 +21,8 @@ public class Main {
 //                new InsertionSort1<>(),
 //                new InsertionSort2<>(),
 //                new MergeSort<>(),
-                new CountingSort()
+//                new CountingSort(),
+                new RadixSort()
 //                new ShellSort<>()
         );
     }
