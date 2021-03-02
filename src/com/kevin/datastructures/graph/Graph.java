@@ -12,5 +12,8 @@ public interface Graph<V, W> {
     int verticesSize();
     int edgesSize();
 
+    void bfs(V begin);
+    void dfs(V begin);
+
     void print();
 }

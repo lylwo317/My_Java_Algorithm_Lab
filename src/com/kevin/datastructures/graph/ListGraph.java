@@ -165,6 +165,98 @@ public class ListGraph<V, W> implements Graph<V, W> {
     }
 
     @Override
+    public void bfs(V begin) {
+        Vertex<V, W> vertex = vertexMap.get(begin);
+        if (vertex == null) {
+            return;
+        }
+
+        Queue<Vertex<V, W>> vertexQueue = new LinkedList<>();
+        Set<Vertex<V, W>> hasOfferSet = new HashSet<>();
+        vertexQueue.offer(vertex);
+        hasOfferSet.add(vertex);
+
+        while (!vertexQueue.isEmpty()) {
+            Vertex<V, W> poll = vertexQueue.poll();
+            System.out.println(poll);
+
+            poll.outEdges.forEach(vwEdge -> {
+                if (!hasOfferSet.contains(vwEdge.to)) {
+                    vertexQueue.offer(vwEdge.to);
+                    hasOfferSet.add(vwEdge.to);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void dfs(V begin) {
+        Vertex<V, W> vertex = vertexMap.get(begin);
+        if (vertex == null) {
+            return;
+        }
+        Set<Vertex<V, W>> hasVisitVertex = new HashSet<>();
+        dfsIteration(vertex, hasVisitVertex);
+//        dfsRecursion(vertex, hasVisitVertex);
+    }
+
+    /**
+     * 迭代版本，深度遍历
+     * @param vertex
+     * @param hasVisitVertex
+     */
+    private void dfsIteration(Vertex<V, W> vertex, Set<Vertex<V, W>> hasVisitVertex) {
+        Deque<Vertex<V, W>> vertexStack = new LinkedList<>();
+        do {
+            while (vertex != null) {//往深处走。vertex == null就说明已经走到路径的最底部了
+                vertexStack.push(vertex);
+                System.out.println(vertex);
+                hasVisitVertex.add(vertex);
+
+                Set<Edge<V, W>> outEdges = vertex.outEdges;
+                vertex = null;
+                for (Edge<V, W> outEdge : outEdges) {
+                    if (!hasVisitVertex.contains(outEdge.to)) {
+                        vertex = outEdge.to;
+                        break;
+                    }
+                }
+            }
+
+            if (!vertexStack.isEmpty()) {//vertex == null
+                // 折返到栈顶节点，然后查看有没有其他从栈顶顶点出发还没走过的顶点
+                Vertex<V, W> peak = vertexStack.peek();
+                for (Edge<V, W> outEdge : peak.outEdges) {
+                    if (!hasVisitVertex.contains(outEdge.to)) {
+                        vertex = outEdge.to;//继续走上面的 往深处走的逻辑
+                        break;
+                    }
+                }
+                if (vertex == null) {
+                    vertexStack.pop();
+                }
+            }
+
+        } while (vertex != null || !vertexStack.isEmpty());
+    }
+
+    /**
+     * 递归版本，深度遍历
+     * @param vertex
+     * @param hasVisitVertex
+     */
+    private void dfsRecursion(Vertex<V, W> vertex, Set<Vertex<V, W>> hasVisitVertex) {
+        System.out.println(vertex);
+        hasVisitVertex.add(vertex);
+
+        vertex.outEdges.forEach(vwEdge -> {
+            if (!hasVisitVertex.contains(vwEdge.to)) {
+                dfsRecursion(vwEdge.to, hasVisitVertex);
+            }
+        });
+    }
+
+    @Override
     public void print() {
         System.out.println("[顶点]-------------------\n");
         vertexMap.forEach((V v, Vertex<V, W> vertex) -> {
@@ -177,23 +269,6 @@ public class ListGraph<V, W> implements Graph<V, W> {
         });
 
         System.out.println("[边]-------------------");
-        edgeSet.forEach((Edge<V, W> edge) -> {
-            System.out.println(edge);
-        });
-
-//        System.out.println(this);
-    }
-
-    @Override
-    public String toString() {
-        String s = "";
-        for (Iterator<Map.Entry<V, Vertex<V, W>>> iterator = vertexMap.entrySet().iterator(); iterator.hasNext(); ) {
-            Map.Entry<V, Vertex<V, W>> next = iterator.next();
-            s += next.getKey();
-        }
-        return "ListGraph{" +
-                "vertexMap=" + vertexMap +
-                ", edgeSet=" + edgeSet +
-                '}';
+        edgeSet.forEach(System.out::println);
     }
 }

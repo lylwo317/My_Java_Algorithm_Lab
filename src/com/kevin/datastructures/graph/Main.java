@@ -2,14 +2,32 @@ package com.kevin.datastructures.graph;
 
 public class Main {
     public static void main(String[] args) {
-/*        Graph<String, Integer> graph = new ListGraph<>();
 
-        graph.addEdge("v0", "v1");
-        graph.addEdge("v1", "v2");
-        graph.addEdge("v2", "v1");
+//        Graph<String, Integer> graph = new ListGraph<>();
+//
+//        graph.addEdge("V1", "V0", 9);
+//        graph.addEdge("V1", "V2", 3);
+//        graph.addEdge("V2", "V0", 2);
+//        graph.addEdge("V2", "V3", 5);
+//        graph.addEdge("V3", "V4", 1);
+//        graph.addEdge("V0", "V4", 6);
+//
+//        graph.bfs("V1");
 
-        graph.print();*/
-        test();
+//        test();
+
+//        testBfs();
+        testDfs();
+    }
+
+    static void testBfs() {
+        Graph<Object, Double> graph = directedGraph(Data.BFS_02);
+        graph.bfs(5);
+    }
+
+    static void testDfs() {
+        Graph<Object, Double> graph = undirectedGraph(Data.DFS_01);
+        graph.dfs(1);
     }
 
     static void test() {
@@ -34,10 +52,46 @@ public class Main {
 
         graph.print();
 
-		graph.removeVertex("V0");
+        graph.removeVertex("V0");
         graph.removeVertex("V1");
 //        graph.removeVertex("V2");
 
         graph.print();
+    }
+
+    private static Graph<Object, Double> directedGraph(Object[][] data) {
+        Graph<Object, Double> graph = new ListGraph<>();
+        for (int i = 0; i < data.length; i++) {
+            Object[] datum = data[i];
+            if (datum.length == 1) {
+                graph.addVertex(datum[0]);
+            } else if (datum.length == 2) {
+                graph.addEdge(datum[0], datum[1]);
+            } else if (datum.length == 3) {
+                double weight = Double.parseDouble(datum[2].toString());
+                graph.addEdge(datum[0], datum[1], weight);
+            }
+        }
+
+        return graph;
+    }
+
+    private static Graph<Object, Double> undirectedGraph(Object[][] data) {
+        Graph<Object, Double> graph = new ListGraph<>();
+        for (int i = 0; i < data.length; i++) {
+            Object[] datum = data[i];
+            if (datum.length == 1) {
+                graph.addVertex(datum[0]);
+            } else if (datum.length == 2) {
+                graph.addEdge(datum[0], datum[1]);
+                graph.addEdge(datum[1], datum[0]);
+            } else if (datum.length == 3) {
+                double weight = Double.parseDouble(datum[2].toString());
+                graph.addEdge(datum[0], datum[1], weight);
+                graph.addEdge(datum[1], datum[0], weight);
+            }
+        }
+
+        return graph;
     }
 }
