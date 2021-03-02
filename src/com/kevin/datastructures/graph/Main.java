@@ -22,12 +22,19 @@ public class Main {
 
     static void testBfs() {
         Graph<Object, Double> graph = directedGraph(Data.BFS_02);
-        graph.bfs(5);
+        graph.bfs(5, o -> {
+            System.out.println(o);
+            return false;
+        });
     }
 
     static void testDfs() {
-        Graph<Object, Double> graph = undirectedGraph(Data.DFS_01);
-        graph.dfs(1);
+        Graph<Object, Double> graph = directedGraph(Data.DFS_02);
+//        graph.dfs("a");//a b e f c
+        graph.dfs("c", o -> {
+            System.out.println(o);//c b e f
+            return false;
+        });
     }
 
     static void test() {

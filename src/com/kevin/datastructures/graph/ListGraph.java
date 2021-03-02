@@ -165,7 +165,10 @@ public class ListGraph<V, W> implements Graph<V, W> {
     }
 
     @Override
-    public void bfs(V begin) {
+    public void bfs(V begin, VertexVisitor<V> visitor) {
+        if (visitor == null) {
+            return;
+        }
         Vertex<V, W> vertex = vertexMap.get(begin);
         if (vertex == null) {
             return;
@@ -178,7 +181,9 @@ public class ListGraph<V, W> implements Graph<V, W> {
 
         while (!vertexQueue.isEmpty()) {
             Vertex<V, W> poll = vertexQueue.poll();
-            System.out.println(poll);
+            if (visitor.visit(poll.value)) {
+                return;
+            }
 
             poll.outEdges.forEach(vwEdge -> {
                 if (!hasOfferSet.contains(vwEdge.to)) {
@@ -190,27 +195,32 @@ public class ListGraph<V, W> implements Graph<V, W> {
     }
 
     @Override
-    public void dfs(V begin) {
+    public void dfs(V begin, VertexVisitor<V> visitor) {
+        if (visitor == null) {
+            return;
+        }
         Vertex<V, W> vertex = vertexMap.get(begin);
         if (vertex == null) {
             return;
         }
         Set<Vertex<V, W>> hasVisitVertex = new HashSet<>();
-        dfsIteration(vertex, hasVisitVertex);
-//        dfsRecursion(vertex, hasVisitVertex);
+//        dfsIteration2(vertex, hasVisitVertex, visitor);
+        dfsRecursion(vertex, hasVisitVertex, visitor);
     }
 
     /**
-     * 迭代版本，深度遍历
+     * 迭代版本V1，深度遍历
      * @param vertex
      * @param hasVisitVertex
      */
-    private void dfsIteration(Vertex<V, W> vertex, Set<Vertex<V, W>> hasVisitVertex) {
+    private void dfsIteration1(Vertex<V, W> vertex, Set<Vertex<V, W>> hasVisitVertex, VertexVisitor<V> visitor) {
         Deque<Vertex<V, W>> vertexStack = new LinkedList<>();
         do {
             while (vertex != null) {//往深处走。vertex == null就说明已经走到路径的最底部了
                 vertexStack.push(vertex);
-                System.out.println(vertex);
+                if (visitor.visit(vertex.value)) {
+                    return;
+                }
                 hasVisitVertex.add(vertex);
 
                 Set<Edge<V, W>> outEdges = vertex.outEdges;
@@ -241,17 +251,50 @@ public class ListGraph<V, W> implements Graph<V, W> {
     }
 
     /**
-     * 递归版本，深度遍历
+     * 迭代版本V2，深度遍历
      * @param vertex
      * @param hasVisitVertex
      */
-    private void dfsRecursion(Vertex<V, W> vertex, Set<Vertex<V, W>> hasVisitVertex) {
-        System.out.println(vertex);
+    private void dfsIteration2(Vertex<V, W> vertex, Set<Vertex<V, W>> hasVisitVertex, VertexVisitor<V> visitor) {
+        Deque<Vertex<V, W>> vertexStack = new LinkedList<>();
+
+        vertexStack.push(vertex);
+        hasVisitVertex.add(vertex);
+        if (visitor.visit(vertex.value)) {
+            return;
+        }
+
+        while (!vertexStack.isEmpty()) {
+            Vertex<V, W> pop = vertexStack.pop();
+            for (Edge<V, W> outEdge : pop.outEdges) {
+                if (!hasVisitVertex.contains(outEdge.to)) {
+                    vertexStack.push(outEdge.from);
+                    vertexStack.push(outEdge.to);
+                    if (visitor.visit(outEdge.to.value)) {
+                        return;
+                    }
+                    hasVisitVertex.add(outEdge.to);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * 递归版本，深度遍历
+     * @param vertex
+     * @param hasVisitVertex
+     * @param visitor
+     */
+    private void dfsRecursion(Vertex<V, W> vertex, Set<Vertex<V, W>> hasVisitVertex, VertexVisitor<V> visitor) {
+        if (visitor.visit(vertex.value)) {
+            return;
+        }
         hasVisitVertex.add(vertex);
 
         vertex.outEdges.forEach(vwEdge -> {
             if (!hasVisitVertex.contains(vwEdge.to)) {
-                dfsRecursion(vwEdge.to, hasVisitVertex);
+                dfsRecursion(vwEdge.to, hasVisitVertex, visitor);
             }
         });
     }
