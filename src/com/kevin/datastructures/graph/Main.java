@@ -27,7 +27,7 @@ public class Main {
 
     private static void testMst() {
         Graph<Object, Double> graph = undirectedGraph(Data.MST_01);
-        graph.setWeightManager((w1, w2) -> w2.compareTo(w1));
+        graph.setWeightManager(Double::compareTo);
         Set<Graph.EdgeInfo<Object, Double>> edgeInfos = graph.minimumSpanningTree();
         if (edgeInfos != null) {
             for (Graph.EdgeInfo<Object, Double> edgeInfo : edgeInfos) {

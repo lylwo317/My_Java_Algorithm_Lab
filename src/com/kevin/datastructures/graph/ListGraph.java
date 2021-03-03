@@ -1,8 +1,10 @@
 package com.kevin.datastructures.graph;
 
 import com.kevin.datastructures.heap.BinaryHeap;
+import com.kevin.datastructures.union.GenericUnionFind;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 
 public class ListGraph<V, W> extends Graph<V, W> {
     private Map<V, Vertex<V, W>> vertexMap = new HashMap<>();
@@ -223,28 +225,60 @@ public class ListGraph<V, W> extends Graph<V, W> {
             return null;
         }
 
-        return prim();
+//        return prim();
+        return kruskal();
+    }
+
+    /**
+     * 将所有边按权重排序，小的在前面。然后依次选择最小的边，并且这些边不会形成环。
+     * 当边数等于V-1时。就得到最小生成树
+     * @return
+     */
+    private Set<EdgeInfo<V, W>> kruskal() {
+        if (edgesSize() == 0) {
+            return null;
+        }
+
+        Set<EdgeInfo<V, W>> minEdgeSet = new HashSet<>();
+        //大顶堆，调换比较顺序就能转成小顶堆了
+        BinaryHeap<Edge<V, W>> heap = new BinaryHeap<>(edgeSet, (o1, o2) -> weightManager.compare(o2.weight, o1.weight));
+
+        int verticesSize = verticesSize();
+        GenericUnionFind<Vertex<V, W>> unionFind = new GenericUnionFind<>();
+        //初始化并查集，每个顶点一个集合
+        vertexMap.forEach((v, vertex) -> unionFind.makeSet(vertex));
+        while (!heap.isEmpty() && minEdgeSet.size() < verticesSize - 1) {
+            Edge<V, W> edge = heap.remove();
+            if (unionFind.isSame(edge.from, edge.to)) {//查询是否已经在同一个集合
+               continue;
+            }
+
+            minEdgeSet.add(edge.getInfo());
+            unionFind.union(edge.from, edge.to);//合并两个顶点所在的集合
+        }
+
+        return minEdgeSet;
     }
 
     private Set<EdgeInfo<V, W>> prim() {
         Iterator<Vertex<V, W>> iterator = vertexMap.values().iterator();
-        Vertex<V, W> vertex = null;
-        if (iterator.hasNext()) {
-            vertex = iterator.next();
-        } else {
+        Vertex<V, W> vertex;
+        if (!iterator.hasNext()) {
             return null;
         }
+
+        vertex = iterator.next();
 
         Set<EdgeInfo<V, W>> minEdgeSet = new HashSet<>();
         Set<Vertex<V, W>> hasVisitVertex = new HashSet<>();
         hasVisitVertex.add(vertex);
 
         //小顶堆
-//        PriorityQueue<Edge<V, W>> heap = new PriorityQueue<>((o1, o2) -> weightManager.compare(o2.weight, o1.weight));
+//        PriorityQueue<Edge<V, W>> heap = new PriorityQueue<>((o1, o2) -> weightManager.compare(o1.weight, o2.weight));
 //        heap.addAll(vertex.outEdges);
 
-        //大顶堆
-        BinaryHeap<Edge<V, W>> heap = new BinaryHeap<>(vertex.outEdges, (o1, o2) -> weightManager.compare(o1.weight, o2.weight));
+        //大顶堆，调换比较顺序就能转成小顶堆了
+        BinaryHeap<Edge<V, W>> heap = new BinaryHeap<>(vertex.outEdges, (o1, o2) -> weightManager.compare(o2.weight, o1.weight));
 
         int vertexSize = verticesSize();
         while (!heap.isEmpty() && hasVisitVertex.size() < vertexSize) {
@@ -260,7 +294,6 @@ public class ListGraph<V, W> extends Graph<V, W> {
         }
 
         return minEdgeSet;
-
     }
 
     /**
