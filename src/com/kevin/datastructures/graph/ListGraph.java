@@ -208,6 +208,47 @@ public class ListGraph<V, W> implements Graph<V, W> {
         dfsRecursion(vertex, hasVisitVertex, visitor);
     }
 
+    @Override
+    public Set<EdgeInfo<V, W>> minimumSpanningTree() {
+        return null;
+    }
+
+    /**
+     * 拓扑排序
+     * @return
+     */
+    public List<V> topologicalSorting() {
+        Queue<Vertex<V, W>> vertexQueue = new LinkedList<>();//记录需要移除的入度为0的顶点
+
+        Map<Vertex<V, W>, Integer> vertexIntegerMap =new HashMap<>();//记录顶点入度的size
+
+        List<V> valueList = new ArrayList<>();
+
+        vertexMap.forEach((v, vwVertex) -> {
+            if (vwVertex.inEdges.size() == 0) {
+                vertexQueue.add(vwVertex);
+            } else {
+                vertexIntegerMap.put(vwVertex, vwVertex.inEdges.size());
+            }
+        });
+
+        while (!vertexQueue.isEmpty()) {
+            Vertex<V, W> poll = vertexQueue.poll();//移除入度为0的顶点
+            valueList.add(poll.value);
+            poll.outEdges.forEach(edge -> {
+                Integer integer = vertexIntegerMap.get(edge.to) - 1;
+                if (integer == 0) {//入度为0,加入到队列里面
+                    vertexIntegerMap.remove(edge.to);
+                    vertexQueue.add(edge.to);
+                } else {
+                    vertexIntegerMap.put(edge.to, integer);//更新入度的size
+                }
+            });
+        }
+
+        return valueList;
+    }
+
     /**
      * 迭代版本V1，深度遍历
      * @param vertex

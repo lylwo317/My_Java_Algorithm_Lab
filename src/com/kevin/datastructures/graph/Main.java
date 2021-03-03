@@ -1,5 +1,7 @@
 package com.kevin.datastructures.graph;
 
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
 
@@ -17,7 +19,8 @@ public class Main {
 //        test();
 
 //        testBfs();
-        testDfs();
+//        testDfs();
+        testTopo();
     }
 
     static void testBfs() {
@@ -36,6 +39,13 @@ public class Main {
             return false;
         });
     }
+
+    static void testTopo() {
+        Graph<Object, Double> graph = directedGraph(Data.TOPO);
+        List<Object> list = graph.topologicalSorting();
+        System.out.println(list);
+    }
+
 
     static void test() {
         ListGraph<String, Integer> graph = new ListGraph<>();
