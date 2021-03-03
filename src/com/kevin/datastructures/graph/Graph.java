@@ -3,34 +3,46 @@ package com.kevin.datastructures.graph;
 import java.util.List;
 import java.util.Set;
 
-public interface Graph<V, W> {
-    void addVertex(V v);
-    void removeVertex(V v);
+public abstract class Graph<V, W> {
+    public abstract void addVertex(V v);
+    public abstract void removeVertex(V v);
 
-    void addEdge(V from, V to);
-    void addEdge(V from, V to, W weight);
+    public abstract void addEdge(V from, V to);
+    public abstract void addEdge(V from, V to, W weight);
 
-    void removeEdge(V from, V to);
+    public abstract void removeEdge(V from, V to);
 
-    int verticesSize();
-    int edgesSize();
+    public abstract int verticesSize();
+    public abstract int edgesSize();
 
-    void bfs(V begin, VertexVisitor<V> visitor);
-    void dfs(V begin, VertexVisitor<V> visitor);
+    public abstract void bfs(V begin, VertexVisitor<V> visitor);
+    public abstract void dfs(V begin, VertexVisitor<V> visitor);
 
     /**
      * 拓扑排序
      * @return
      */
-    List<V> topologicalSorting();
+    public abstract List<V> topologicalSorting();
 
     /**
      * 最小生成树
      * @return
      */
-    Set<EdgeInfo<V, W>> minimumSpanningTree();
+    public abstract Set<EdgeInfo<V, W>> minimumSpanningTree();
 
-    final class EdgeInfo<V, W> {
+    protected WeightManager<W> weightManager = null;
+
+    public void setWeightManager(WeightManager<W> weightManager){
+        this.weightManager = weightManager;
+    }
+
+
+    interface WeightManager<W> {
+        int compare(W w1, W w2);
+    }
+
+
+    static final class EdgeInfo<V, W> {
         private V from;
         private V to;
         private W weight;
@@ -68,5 +80,5 @@ public interface Graph<V, W> {
         boolean visit(V v);
     }
 
-    void print();
+    public abstract void print();
 }

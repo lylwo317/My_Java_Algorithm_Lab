@@ -2,9 +2,7 @@ package com.kevin.datastructures.heap;
 
 import com.kevin.datastructures.tree.printer.BinaryTreeInfo;
 
-import java.util.Comparator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by: kevin
@@ -13,6 +11,23 @@ import java.util.Objects;
 public class BinaryHeap<E> extends AbstractHeap<E> implements BinaryTreeInfo {
     private E[] elements;
     private static final int DEFAULT_CAPACITY = 10;
+
+    public BinaryHeap(Collection<E> elements, Comparator<E> comparator) {
+        super(comparator);
+        if (elements == null || elements.size() == 0) {
+            this.elements = (E[]) new Object[DEFAULT_CAPACITY];
+        } else {
+            size = elements.size();
+            int capacity = Math.max(elements.size(), DEFAULT_CAPACITY);
+            this.elements = (E[]) new Object[capacity];
+            int i = 0;
+            for (E element : elements) {
+                this.elements[i++] = element;
+            }
+            heapify();
+        }
+    }
+
 
     @SuppressWarnings("unchecked")
     public BinaryHeap(E[] elements, Comparator<E> comparator) {
@@ -35,11 +50,23 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements BinaryTreeInfo {
     }
 
     public BinaryHeap(Comparator<E> comparator) {
-        this(null, comparator);
+        super(comparator);
+        this.elements = (E[]) new Object[DEFAULT_CAPACITY];
     }
 
     public BinaryHeap() {
-        this(null, null);
+        this.elements = (E[]) new Object[DEFAULT_CAPACITY];
+    }
+
+    @Override
+    public void addAll(Collection<E> collection) {
+        if (collection == null) {
+            return;
+        }
+
+        for (E e : collection) {
+            add(e);
+        }
     }
 
     @Override
@@ -79,7 +106,7 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements BinaryTreeInfo {
 
         elements = newElement;
 
-        System.out.println(oldCapacity + "缩容为" + newCapacity);
+//        System.out.println(oldCapacity + "缩容为" + newCapacity);
     }
 
     @Override
@@ -102,6 +129,7 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements BinaryTreeInfo {
         elements[lastIndex] = null;
         size--;
         siftDown(0);
+        trim();
         return remove;
     }
 

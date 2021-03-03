@@ -1,8 +1,10 @@
 package com.kevin.datastructures.graph;
 
+import com.kevin.datastructures.heap.BinaryHeap;
+
 import java.util.*;
 
-public class ListGraph<V, W> implements Graph<V, W> {
+public class ListGraph<V, W> extends Graph<V, W> {
     private Map<V, Vertex<V, W>> vertexMap = new HashMap<>();
     private Set<Edge<V, W>> edgeSet = new HashSet<>();
 
@@ -47,6 +49,10 @@ public class ListGraph<V, W> implements Graph<V, W> {
             this.weight = weight;
             this.from = from;
             this.to = to;
+        }
+
+        public EdgeInfo<V, W> getInfo() {
+            return new EdgeInfo<>(from.value, to.value, weight);
         }
 
         @Override
@@ -125,7 +131,7 @@ public class ListGraph<V, W> implements Graph<V, W> {
             vertexMap.put(to, toVertex);
         }
 
-        Edge<V, W> edge = new Edge<>(fromVertex, toVertex);
+        Edge<V, W> edge = new Edge<>(fromVertex, toVertex, weight);
         if (fromVertex.outEdges.remove(edge)) {
             toVertex.inEdges.remove(edge);
             edgeSet.remove(edge);
@@ -208,9 +214,53 @@ public class ListGraph<V, W> implements Graph<V, W> {
         dfsRecursion(vertex, hasVisitVertex, visitor);
     }
 
+    /**
+     * @return
+     */
     @Override
     public Set<EdgeInfo<V, W>> minimumSpanningTree() {
-        return null;
+        if (weightManager == null) {
+            return null;
+        }
+
+        return prim();
+    }
+
+    private Set<EdgeInfo<V, W>> prim() {
+        Iterator<Vertex<V, W>> iterator = vertexMap.values().iterator();
+        Vertex<V, W> vertex = null;
+        if (iterator.hasNext()) {
+            vertex = iterator.next();
+        } else {
+            return null;
+        }
+
+        Set<EdgeInfo<V, W>> minEdgeSet = new HashSet<>();
+        Set<Vertex<V, W>> hasVisitVertex = new HashSet<>();
+        hasVisitVertex.add(vertex);
+
+        //小顶堆
+//        PriorityQueue<Edge<V, W>> heap = new PriorityQueue<>((o1, o2) -> weightManager.compare(o2.weight, o1.weight));
+//        heap.addAll(vertex.outEdges);
+
+        //大顶堆
+        BinaryHeap<Edge<V, W>> heap = new BinaryHeap<>(vertex.outEdges, (o1, o2) -> weightManager.compare(o1.weight, o2.weight));
+
+        int vertexSize = verticesSize();
+        while (!heap.isEmpty() && hasVisitVertex.size() < vertexSize) {
+            Edge<V, W> minEdge = heap.remove();
+
+            if (hasVisitVertex.contains(minEdge.to)) {
+                continue;
+            }
+
+            minEdgeSet.add(minEdge.getInfo());
+            heap.addAll(minEdge.to.outEdges);
+            hasVisitVertex.add(minEdge.to);
+        }
+
+        return minEdgeSet;
+
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.kevin.datastructures.heap;
 
+import java.util.Collection;
 import java.util.Comparator;
 
 /**
@@ -32,4 +33,6 @@ public abstract class AbstractHeap<E> implements Heap<E> {
     protected int compare(E e1, E e2) {
         return comparator != null ? comparator.compare(e1, e2) : ((Comparable<E>) e1).compareTo(e2);
     }
+
+    public abstract void addAll(Collection<E> collection);
 }

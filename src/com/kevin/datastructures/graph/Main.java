@@ -1,6 +1,7 @@
 package com.kevin.datastructures.graph;
 
 import java.util.List;
+import java.util.Set;
 
 public class Main {
     public static void main(String[] args) {
@@ -20,7 +21,19 @@ public class Main {
 
 //        testBfs();
 //        testDfs();
-        testTopo();
+//        testTopo();
+        testMst();
+    }
+
+    private static void testMst() {
+        Graph<Object, Double> graph = undirectedGraph(Data.MST_01);
+        graph.setWeightManager((w1, w2) -> w2.compareTo(w1));
+        Set<Graph.EdgeInfo<Object, Double>> edgeInfos = graph.minimumSpanningTree();
+        if (edgeInfos != null) {
+            for (Graph.EdgeInfo<Object, Double> edgeInfo : edgeInfos) {
+                System.out.println(edgeInfo);
+            }
+        }
     }
 
     static void testBfs() {
