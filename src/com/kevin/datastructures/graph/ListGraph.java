@@ -4,7 +4,6 @@ import com.kevin.datastructures.heap.BinaryHeap;
 import com.kevin.datastructures.union.GenericUnionFind;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 
 public class ListGraph<V, W> extends Graph<V, W> {
     private Map<V, Vertex<V, W>> vertexMap = new HashMap<>();
@@ -227,6 +226,52 @@ public class ListGraph<V, W> extends Graph<V, W> {
 
 //        return prim();
         return kruskal();
+    }
+
+    @Override
+    public Map<V, W> shortestPath(V begin) {
+        Map<Vertex<V, W>, W> paths = new HashMap<>();
+        Map<V, W> selectedPath = new HashMap<>();
+        Vertex<V, W> vertex = vertexMap.get(begin);
+
+        paths.put(vertex, weightManager.zero());
+
+        while (!paths.isEmpty()) {
+            Map.Entry<Vertex<V, W>, W> minEntry = getMinPath(paths);
+            //minVertex 就是下一个会被提起来的 顶点
+            Vertex<V, W> minVertex = minEntry.getKey();
+            selectedPath.put(minEntry.getKey().value, minEntry.getValue());
+            paths.remove(minVertex);
+
+            for (Edge<V, W> outEdge : minVertex.outEdges) {
+//                relax(toVertex, paths);//更新paths信息
+                if (selectedPath.containsKey(outEdge.to.value)) {//该节点已经被提起来了，不用去更新了
+                    continue;
+                }
+
+                W preAllValue = minEntry.getValue();
+                W newWeight = weightManager.add(preAllValue, outEdge.weight);
+
+                W w = paths.get(outEdge.to);
+                if (w == null || weightManager.compare(newWeight, w) < 0) {
+                    paths.put(outEdge.to, newWeight);
+                }
+            }
+        }
+
+        return selectedPath;
+    }
+
+    private Map.Entry<Vertex<V, W>, W> getMinPath(Map<Vertex<V, W>, W> paths) {
+        Iterator<Map.Entry<Vertex<V, W>, W>> iterator = paths.entrySet().iterator();
+        Map.Entry<Vertex<V, W>, W> minVertex = iterator.next();
+        while (iterator.hasNext()) {
+            Map.Entry<Vertex<V, W>, W> next = iterator.next();
+            if (weightManager.compare(next.getValue(), minVertex.getValue()) < 0) {
+                minVertex = next;
+            }
+        }
+        return minVertex;
     }
 
     /**

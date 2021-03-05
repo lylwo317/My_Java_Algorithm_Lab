@@ -1,6 +1,7 @@
 package com.kevin.datastructures.graph;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Main {
@@ -22,12 +23,60 @@ public class Main {
 //        testBfs();
 //        testDfs();
 //        testTopo();
-        testMst();
+//        testMst();
+        testSp();
+    }
+
+    private static void testSp() {
+        Graph<Object, Double> graph = undirectedGraph(Data.SP);
+        graph.setWeightManager(new Graph.WeightManager<>() {
+            @Override
+            public int compare(Double w1, Double w2) {
+                return w1.compareTo(w2);
+            }
+
+            @Override
+            public Double zero() {
+                return 0.0;
+            }
+
+            @Override
+            public Double add(Double w1, Double w2) {
+                return w1 + w2;
+            }
+        });
+        Map<Object, Double> shortestPath = graph.shortestPath("A");
+        shortestPath.forEach((o, aDouble) -> {
+            System.out.println("V = " + o + " weiget = " + aDouble);
+        });
+/*
+        Set<Graph.EdgeInfo<Object, Double>> edgeInfos = graph.minimumSpanningTree();
+        if (edgeInfos != null) {
+            for (Graph.EdgeInfo<Object, Double> edgeInfo : edgeInfos) {
+                System.out.println(edgeInfo);
+            }
+        }
+*/
     }
 
     private static void testMst() {
         Graph<Object, Double> graph = undirectedGraph(Data.MST_01);
-        graph.setWeightManager(Double::compareTo);
+        graph.setWeightManager(new Graph.WeightManager<>() {
+            @Override
+            public int compare(Double w1, Double w2) {
+                return w1.compareTo(w2);
+            }
+
+            @Override
+            public Double zero() {
+                return 0.0;
+            }
+
+            @Override
+            public Double add(Double w1, Double w2) {
+                return w1 + w2;
+            }
+        });
         Set<Graph.EdgeInfo<Object, Double>> edgeInfos = graph.minimumSpanningTree();
         if (edgeInfos != null) {
             for (Graph.EdgeInfo<Object, Double> edgeInfo : edgeInfos) {

@@ -1,6 +1,7 @@
 package com.kevin.datastructures.graph;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class Graph<V, W> {
@@ -30,6 +31,8 @@ public abstract class Graph<V, W> {
      */
     public abstract Set<EdgeInfo<V, W>> minimumSpanningTree();
 
+    public abstract Map<V, W> shortestPath(V begin);
+
     protected WeightManager<W> weightManager = null;
 
     public void setWeightManager(WeightManager<W> weightManager){
@@ -39,6 +42,8 @@ public abstract class Graph<V, W> {
 
     interface WeightManager<W> {
         int compare(W w1, W w2);
+        W zero();
+        W add(W w1, W w2);
     }
 
 
