@@ -229,45 +229,53 @@ public class ListGraph<V, W> extends Graph<V, W> {
     }
 
     @Override
-    public Map<V, W> shortestPath(V begin) {
-        Map<Vertex<V, W>, W> paths = new HashMap<>();
-        Map<V, W> selectedPath = new HashMap<>();
+    public Map<V, PathInfo<V, W>> shortestPath(V begin) {
+        Map<Vertex<V, W>, PathInfo<V, W>> paths = new HashMap<>();//仍未被提起来的顶点以及路径信息。这里面最小的pathInfo就是下一个被提起来的顶点
+        Map<V, PathInfo<V, W>> selectedPath = new HashMap<>();
         Vertex<V, W> vertex = vertexMap.get(begin);
 
-        paths.put(vertex, weightManager.zero());
+        paths.put(vertex, new PathInfo<>(weightManager.zero()));
 
         while (!paths.isEmpty()) {
-            Map.Entry<Vertex<V, W>, W> minEntry = getMinPath(paths);
+            Map.Entry<Vertex<V, W>, PathInfo<V, W>> minPathEntry = getMinPath(paths);
             //minVertex 就是下一个会被提起来的 顶点
-            Vertex<V, W> minVertex = minEntry.getKey();
-            selectedPath.put(minEntry.getKey().value, minEntry.getValue());
+            Vertex<V, W> minVertex = minPathEntry.getKey();
+            selectedPath.put(minPathEntry.getKey().value, minPathEntry.getValue());
             paths.remove(minVertex);
 
             for (Edge<V, W> outEdge : minVertex.outEdges) {
-//                relax(toVertex, paths);//更新paths信息
-                if (selectedPath.containsKey(outEdge.to.value)) {//该节点已经被提起来了，不用去更新了
+                if (selectedPath.containsKey(outEdge.to.value)) {//to顶点已经被提起来了，不用去更新了
                     continue;
                 }
 
-                W preAllValue = minEntry.getValue();
-                W newWeight = weightManager.add(preAllValue, outEdge.weight);
+                PathInfo<V, W> minPathInfo = minPathEntry.getValue();
+                W newWeight = weightManager.add(minPathInfo.getWeight(), outEdge.weight);
 
-                W w = paths.get(outEdge.to);
-                if (w == null || weightManager.compare(newWeight, w) < 0) {
-                    paths.put(outEdge.to, newWeight);
+                PathInfo<V, W> toVertexPathInfo = paths.get(outEdge.to);
+                if (toVertexPathInfo == null) {
+                    toVertexPathInfo = new PathInfo<>();
+                    paths.put(outEdge.to, toVertexPathInfo);
+                }
+
+                //更新PathInfo
+                if (toVertexPathInfo.getWeight() == null || weightManager.compare(newWeight, toVertexPathInfo.getWeight()) < 0) {
+                    toVertexPathInfo.getEdgeInfoList().clear();
+                    toVertexPathInfo.getEdgeInfoList().addAll(minPathInfo.getEdgeInfoList());
+                    toVertexPathInfo.getEdgeInfoList().add(outEdge.getInfo());
+                    toVertexPathInfo.setWeight(newWeight);
                 }
             }
         }
-
+        selectedPath.remove(begin);
         return selectedPath;
     }
 
-    private Map.Entry<Vertex<V, W>, W> getMinPath(Map<Vertex<V, W>, W> paths) {
-        Iterator<Map.Entry<Vertex<V, W>, W>> iterator = paths.entrySet().iterator();
-        Map.Entry<Vertex<V, W>, W> minVertex = iterator.next();
+    private Map.Entry<Vertex<V, W>, PathInfo<V, W>> getMinPath(Map<Vertex<V, W>, PathInfo<V, W>> paths) {
+        Iterator<Map.Entry<Vertex<V, W>, PathInfo<V, W>>> iterator = paths.entrySet().iterator();
+        Map.Entry<Vertex<V, W>, PathInfo<V, W>> minVertex = iterator.next();
         while (iterator.hasNext()) {
-            Map.Entry<Vertex<V, W>, W> next = iterator.next();
-            if (weightManager.compare(next.getValue(), minVertex.getValue()) < 0) {
+            Map.Entry<Vertex<V, W>, PathInfo<V, W>> next = iterator.next();
+            if (weightManager.compare(next.getValue().getWeight(), minVertex.getValue().getWeight()) < 0) {
                 minVertex = next;
             }
         }

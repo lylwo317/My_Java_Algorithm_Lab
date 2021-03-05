@@ -45,18 +45,9 @@ public class Main {
                 return w1 + w2;
             }
         });
-        Map<Object, Double> shortestPath = graph.shortestPath("A");
-        shortestPath.forEach((o, aDouble) -> {
-            System.out.println("V = " + o + " weiget = " + aDouble);
-        });
-/*
-        Set<Graph.EdgeInfo<Object, Double>> edgeInfos = graph.minimumSpanningTree();
-        if (edgeInfos != null) {
-            for (Graph.EdgeInfo<Object, Double> edgeInfo : edgeInfos) {
-                System.out.println(edgeInfo);
-            }
-        }
-*/
+        Object begin = "C";
+        Map<Object, Graph.PathInfo<Object, Double>> shortestPath = graph.shortestPath(begin);
+        shortestPath.forEach((o, pathInfo) -> System.out.println(begin + " to " + o + ", " + pathInfo));
     }
 
     private static void testMst() {

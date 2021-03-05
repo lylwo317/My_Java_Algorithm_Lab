@@ -1,5 +1,6 @@
 package com.kevin.datastructures.graph;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +32,7 @@ public abstract class Graph<V, W> {
      */
     public abstract Set<EdgeInfo<V, W>> minimumSpanningTree();
 
-    public abstract Map<V, W> shortestPath(V begin);
+    public abstract Map<V, PathInfo<V, W>> shortestPath(V begin);
 
     protected WeightManager<W> weightManager = null;
 
@@ -44,6 +45,42 @@ public abstract class Graph<V, W> {
         int compare(W w1, W w2);
         W zero();
         W add(W w1, W w2);
+    }
+
+    static final class PathInfo<V, W>{
+        private List<EdgeInfo<V, W>> edgeInfoList = new ArrayList<>();
+        private W weight;
+
+        public PathInfo() {
+        }
+
+        public PathInfo(W weight) {
+            this.weight = weight;
+        }
+
+        public List<EdgeInfo<V, W>> getEdgeInfoList() {
+            return edgeInfoList;
+        }
+
+        public void setEdgeInfoList(List<EdgeInfo<V, W>> edgeInfoList) {
+            this.edgeInfoList = edgeInfoList;
+        }
+
+        public W getWeight() {
+            return weight;
+        }
+
+        public void setWeight(W weight) {
+            this.weight = weight;
+        }
+
+        @Override
+        public String toString() {
+            return "PathInfo{" +
+                    "edgeInfoList=" + edgeInfoList +
+                    ", weight=" + weight +
+                    '}';
+        }
     }
 
 
