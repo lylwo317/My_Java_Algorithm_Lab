@@ -28,7 +28,7 @@ public class Main {
     }
 
     private static void testSp() {
-        Graph<Object, Double> graph = undirectedGraph(Data.SP);
+        Graph<Object, Double> graph = directedGraph(Data.SP);
         graph.setWeightManager(new Graph.WeightManager<>() {
             @Override
             public int compare(Double w1, Double w2) {
@@ -45,7 +45,7 @@ public class Main {
                 return w1 + w2;
             }
         });
-        Object begin = "C";
+        Object begin = "A";
         Map<Object, Graph.PathInfo<Object, Double>> shortestPath = graph.shortestPath(begin);
         shortestPath.forEach((o, pathInfo) -> System.out.println(begin + " to " + o + ", " + pathInfo));
     }
