@@ -34,6 +34,8 @@ public abstract class Graph<V, W> {
 
     public abstract Map<V, PathInfo<V, W>> shortestPath(V begin);
 
+    public abstract Map<V, Map<V, PathInfo<V, W>>> shortestPath();
+
     protected WeightManager<W> weightManager = null;
 
     public void setWeightManager(WeightManager<W> weightManager){

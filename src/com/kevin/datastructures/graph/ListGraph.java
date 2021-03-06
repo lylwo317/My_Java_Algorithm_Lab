@@ -234,6 +234,84 @@ public class ListGraph<V, W> extends Graph<V, W> {
 //        return dijkstra(begin);
     }
 
+    /**
+     * Floyd
+     * 其实思想就是求每个ij经过k顶点的最短路径
+     *
+     * 每次k都能至少求出贯穿所有经过k(from k 和 to k)的临近dist(i,j)的最短路径
+     * 随着每个顶点都作为k去遍历一遍，这样每个k周围经过k的dist(i,j)的最短路径都能求出来，并且这些k点会
+     * 融合扩大，这样这个图上所有点之间的最短路径就求出来了
+     *
+     * @return
+     */
+    @Override
+    public Map<V, Map<V, PathInfo<V, W>>> shortestPath() {
+        Map<V, Map<V, PathInfo<V, W>>> shortestPaths = new HashMap<>();
+
+        //初始化
+        for (Edge<V, W> edge : edgeSet) {
+            Map<V, PathInfo<V, W>> vPathInfoMap = shortestPaths.get(edge.from.value);
+
+            if (vPathInfoMap == null) {
+                vPathInfoMap = new HashMap<>();
+                shortestPaths.put(edge.from.value, vPathInfoMap);
+            }
+
+            PathInfo<V, W> pathInfo = new PathInfo<>(edge.weight);
+            pathInfo.getEdgeInfoList().add(edge.getInfo());
+            vPathInfoMap.put(edge.to.value, pathInfo);
+        }
+
+        vertexMap.forEach((k, vertexK) -> {
+            vertexMap.forEach((i, vertexI) -> {
+                vertexMap.forEach((j, vertexJ) -> {
+                    if (i.equals(j) || i.equals(k) || j.equals(k)) {
+                        return;
+                    }
+
+                    PathInfo<V, W> i2kPathInfo = getPathInfo(i, k, shortestPaths);
+                    if (i2kPathInfo == null) {
+                        return;
+                    }
+                    PathInfo<V, W> k2jPathInfo = getPathInfo(k, j, shortestPaths);
+                    if (k2jPathInfo == null) {
+                        return;
+                    }
+
+                    PathInfo<V, W> i2jPathInfo = getPathInfo(i, j, shortestPaths);
+
+                    W newWeight = weightManager.add(i2kPathInfo.getWeight(), k2jPathInfo.getWeight());
+
+                    if (i2jPathInfo != null && weightManager.compare(newWeight, i2jPathInfo.getWeight()) >= 0) {
+                        return;
+                    }
+
+                    if (i2jPathInfo == null) {
+                        i2jPathInfo = new PathInfo<>();
+                        Map<V, PathInfo<V, W>> vPathInfoMap = shortestPaths.get(i);
+                        vPathInfoMap.put(j, i2jPathInfo);
+                    } else {
+                        i2jPathInfo.getEdgeInfoList().clear();
+                    }
+
+                    i2jPathInfo.setWeight(newWeight);
+                    i2jPathInfo.getEdgeInfoList().addAll(i2kPathInfo.getEdgeInfoList());
+                    i2jPathInfo.getEdgeInfoList().addAll(k2jPathInfo.getEdgeInfoList());
+                });
+            });
+        });
+        return shortestPaths;
+    }
+
+    private PathInfo<V, W> getPathInfo(V from, V to, Map<V, Map<V, PathInfo<V, W>>> shortestPaths) {
+        Map<V, PathInfo<V, W>> fromToPathInfoMap = shortestPaths.get(from);
+        if (fromToPathInfoMap == null) {
+            return null;
+        } else {
+            return fromToPathInfoMap.get(to);
+        }
+    }
+
     private Map<V, PathInfo<V, W>> bellmanFord(V begin) {
         Map<V, PathInfo<V, W>> selectedPath = new HashMap<>();
         selectedPath.put(begin, new PathInfo<>(weightManager.zero()));

@@ -24,7 +24,37 @@ public class Main {
 //        testDfs();
 //        testTopo();
 //        testMst();
-        testSp();
+//        testSp();
+        testMultiSp();
+    }
+
+    private static void testMultiSp() {
+        Graph<Object, Double> graph = directedGraph(Data.NEGATIVE_WEIGHT1);
+        graph.setWeightManager(new Graph.WeightManager<>() {
+            @Override
+            public int compare(Double w1, Double w2) {
+                return w1.compareTo(w2);
+            }
+
+            @Override
+            public Double zero() {
+                return 0.0;
+            }
+
+            @Override
+            public Double add(Double w1, Double w2) {
+                return w1 + w2;
+            }
+        });
+
+        Map<Object, Map<Object, Graph.PathInfo<Object, Double>>> objectMapMap = graph.shortestPath();
+        objectMapMap.forEach((from, objectPathInfoMap) -> {
+            System.out.println(from + "\n----------------------------");
+            objectPathInfoMap.forEach((to, pathInfo) -> {
+                System.out.println(from + " to " + to + "  " + pathInfo);
+            });
+            System.out.println();
+        });
     }
 
     private static void testSp() {
