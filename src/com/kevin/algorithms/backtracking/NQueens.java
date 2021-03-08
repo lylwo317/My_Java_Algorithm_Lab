@@ -2,6 +2,13 @@ package com.kevin.algorithms.backtracking;
 
 /**
  * N皇后问题
+ *
+ * 时间复杂度：
+ * 优化思路：查表来获取当前位置是否可以摆放，避免每次遍历前面的行的确定是否可以摆放
+ *
+ * 空间复杂度:
+ * 优化思路：使用二进制存储要拿来查询的表
+ *
  * Created by: kevin
  * Date: 2021-03-07
  */
