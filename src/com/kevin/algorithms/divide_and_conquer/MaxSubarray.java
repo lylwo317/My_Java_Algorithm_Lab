@@ -8,6 +8,7 @@ public class MaxSubarray {
     public static void main(String[] args) {
         int[] nums = {-2, 1, -3, 4, -1, 2, 1, -5, 4 };
         System.out.println(maxSubArray(nums));
+//        System.out.println(maxSubArray1(nums));
     }
 
     /**
@@ -45,6 +46,19 @@ public class MaxSubarray {
 
         return Math.max(max,
                 Math.max(maxSubArray(nums, begin, mid), maxSubArray(nums, mid, end)));
+    }
+
+    private static int maxSubArray1(int[] nums) {
+        int maxSum = 0;
+        for (int begin = 0; begin < nums.length; begin++) {
+            int sum = 0;
+            for (int end = begin; end < nums.length; end++) {
+                sum += nums[end];
+                maxSum = Math.max(maxSum, sum);
+            }
+        }
+
+        return maxSum;
     }
 
 }
