@@ -5,16 +5,21 @@ package com.kevin.algorithms.dp;
  *
  * 状态定义：
  * dp[i, j]表示numsA的前i个序列和numbsB前j个序列的最长公共子序列
+ *
  * 初始状态:
  * dp[0,i] = 0, dp[j][0] = 0
+ *
  * 状态转移方程：
  * if(numsA[i - 1] == numsB[j - 1]){
  *     dp[i,j] = dp[i-1][dp-j] + 1
  * }else{
  *     dp[i,j] = Max(dp[i-1][j],dp[i][j-1])
  * }
+ *
+ * 问题的解：
+ * dp[numsA.length, numsB.length]
  */
-public class LCS {
+public class LCSubsequence {
     public static void main(String[] args) {
         int len = lcs4(new int[] {1, 3, 5, 9, 10}, new int[] {1, 4, 9, 10});
 //        int len = lcs1(new int[] {}, new int[] {});
