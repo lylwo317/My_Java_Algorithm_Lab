@@ -32,7 +32,47 @@ public class Knapsack {
     public static void main(String[] args) {
         int[] values = {6, 3, 5, 4, 6};
         int[] weights = {2, 2, 6, 5, 4};
-        System.out.println(maxValue1(values, weights, 10));
+        System.out.println(maxValue3(values, weights, 10));
+    }
+
+    private static int maxValue3(int[] values, int[] weights, int capacity) {
+        if (values == null || values.length == 0 ||
+                weights == null || weights.length == 0 ||
+                values.length != weights.length || capacity <= 0) {
+            return 0;
+        }
+        int[] dp = new int[capacity + 1];
+        for (int i = 1; i <= values.length; i++) {
+            for (int j = capacity; j >= weights[i-1]; j--) {//优化maxValue2中的continue
+                dp[j] = Math.max(
+                        dp[j],
+                        values[i - 1] + dp[j - weights[i - 1]]);
+            }
+        }
+
+        return dp[capacity];
+    }
+
+    private static int maxValue2(int[] values, int[] weights, int capacity) {
+        if (values == null || values.length == 0 ||
+                weights == null || weights.length == 0 ||
+                values.length != weights.length || capacity <= 0) {
+            return 0;
+        }
+        int[] dp = new int[capacity + 1];
+        for (int i = 1; i <= values.length; i++) {
+            for (int j = capacity; j >= 1; j--) {//为什么要从后面往前？因为这里会用到上一行得值比较，而且还比较靠前，所以从后面往前就不会覆盖了
+                if (j < weights[i - 1]) {
+//                    dp[j] = dp[j];//容量不足以放下i
+                    continue;
+                }
+                dp[j] = Math.max(
+                        dp[j],
+                        values[i - 1] + dp[j - weights[i - 1]]);
+            }
+        }
+
+        return dp[capacity];
     }
 
     private static int maxValue1(int[] values, int[] weights, int capacity) {
