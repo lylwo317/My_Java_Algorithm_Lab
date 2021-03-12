@@ -24,7 +24,64 @@ package com.kevin.algorithms.dp;
  */
 public class LISubSequence {
     public static void main(String[] args) {
-        System.out.println(lengthOfLIS1(new int[] {10, 2, 2, 5, 1, 7, 101, 18}));
+        System.out.println(lengthOfLIS3(new int[] {10, 2, 2, 5, 1, 7, 101, 18}));
+    }
+
+    /**
+     * 二分搜索 + 牌堆
+     * @param nums
+     * @return
+     */
+    private static int lengthOfLIS3(int[] nums) {
+        int[] top = new int[nums.length];
+        int len = 0;
+        for (int num : nums) {
+            int begin = 0;
+            int end = len;
+
+            while (begin < end) {
+                int mid = (begin + end) >>> 1;
+                if (num <= top[mid]) {
+                    //左边
+                    end = mid;
+                } else
+                    begin = mid + 1;
+            }
+            if (begin == len) {
+                len++;
+            }
+            top[begin] = num;
+        }
+        return len;
+    }
+
+    /**
+     * 牌堆
+     * @param nums
+     * @return
+     */
+    private static int lengthOfLIS2(int[] nums) {
+        int[] top = new int[nums.length];
+        int len = 0;
+        for (int num : nums) {
+            for (int j = 0; j < top.length; j++) {
+                if (j < len) {//在已有的牌堆里面遍历
+                    //更新
+                    if (top[j] >= num) {//更新堆顶
+                        top[j] = num;
+                        break;//取下一个num
+                    }
+                    //往下一个top遍历
+                } else {
+                    //新建牌堆
+                    top[j] = num;
+                    len++;
+                    break;
+                    //往下一个num遍历
+                }
+            }
+        }
+        return len;
     }
 
     /**
