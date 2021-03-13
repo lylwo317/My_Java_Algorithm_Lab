@@ -27,6 +27,10 @@ public class LCSubstring {
 
     /**
      * 通过一维数组，和选择最短的数组作为列减少空间复杂度
+     *
+     * 时间复杂度：O(n*m) n表示数组A的长度， m表示数组B的长度
+     * 空间复杂度：O(k) k = min(n, m)
+     *
      * @param strA
      * @param strB
      * @return 最长公共子串长度

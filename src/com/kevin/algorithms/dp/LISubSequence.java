@@ -29,6 +29,8 @@ public class LISubSequence {
 
     /**
      * 二分搜索 + 牌堆
+     * 时间复杂度: 平均 O(nlog n)
+     * 空间复杂度: O(n)
      * @param nums
      * @return
      */
@@ -57,6 +59,8 @@ public class LISubSequence {
 
     /**
      * 牌堆
+     * 时间复杂度: 最坏O(n^2) 最好O(n) 平均O(n^2)
+     * 空间复杂度: O(n)
      * @param nums
      * @return
      */
@@ -86,6 +90,8 @@ public class LISubSequence {
 
     /**
      * 动态规划
+     * 时间复杂度: O(n^2)
+     * 空间复杂度: O(n)
      * @param nums
      * @return
      */

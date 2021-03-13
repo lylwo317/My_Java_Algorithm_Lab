@@ -20,6 +20,9 @@ public class CoinChange {
      * 状态转移方程：
      * dp[i] = min(dp[i-face[0]], dp[i-face[1]], ...) + 1//类似走楼梯
      *
+     * 时间复杂度：O(n*m) n要兑换的额度， m是硬币的面额种类
+     * 空间复杂度：O(n)
+     *
      * @param money
      * @param faces
      * @return

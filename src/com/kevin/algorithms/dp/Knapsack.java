@@ -38,7 +38,11 @@ public class Knapsack {
     /**
      * 正好能放满的方案，否则返回-1
      *
-     * 优化空间复杂度
+     * 优化空间复杂度和时间复杂度
+     *
+     * 时间复杂度：O(n*k) n表示物品数量，k表示（最大容量 - 当前要判断的的物品i的重量）的差值
+     * 空间复杂度：O(m) m表示最大容量
+     *
      * @param values
      * @param weights
      * @param capacity
@@ -72,6 +76,10 @@ public class Knapsack {
 
     /**
      * 正好能放满的方案，否则返回-1
+     *
+     * 时间复杂度：O(n*m) n表示物品数量，m表示最大容量
+     * 空间复杂度：O(n*m)
+     *
      * @param values
      * @param weights
      * @param capacity
@@ -109,6 +117,15 @@ public class Knapsack {
         return dp[values.length][capacity];
     }
 
+    /**
+     * 时间复杂度：O(n*k) n表示物品数量，k表示（最大容量 - 当前要判断的的物品重量）的差值
+     * 空间复杂度：O(m) m表示最大容量
+     *
+     * @param values
+     * @param weights
+     * @param capacity
+     * @return
+     */
     private static int maxValue3(int[] values, int[] weights, int capacity) {
         if (values == null || values.length == 0 ||
                 weights == null || weights.length == 0 ||
@@ -127,6 +144,14 @@ public class Knapsack {
         return dp[capacity];
     }
 
+    /**
+     * 时间复杂度：O(n*m) n表示物品数量，m表示最大容量
+     * 空间复杂度：O(m)
+     * @param values
+     * @param weights
+     * @param capacity
+     * @return
+     */
     private static int maxValue2(int[] values, int[] weights, int capacity) {
         if (values == null || values.length == 0 ||
                 weights == null || weights.length == 0 ||
@@ -135,7 +160,7 @@ public class Knapsack {
         }
         int[] dp = new int[capacity + 1];
         for (int i = 1; i <= values.length; i++) {
-            for (int j = capacity; j >= 1; j--) {//为什么要从后面往前？因为这里会用到上一行得值比较，而且还比较靠前，所以从后面往前就不会覆盖了
+            for (int j = capacity; j >= 1; j--) {//为什么要从后面往前？因为这里会用到上一行的值比较，而且还比较靠前，所以从后面往前就不会覆盖了
                 if (j < weights[i - 1]) {
 //                    dp[j] = dp[j];//容量不足以放下i
                     continue;
@@ -149,6 +174,14 @@ public class Knapsack {
         return dp[capacity];
     }
 
+    /**
+     * 时间复杂度：O(n*m) n表示物品数量，m表示最大容量
+     * 空间复杂度：O(n*m)
+     * @param values
+     * @param weights
+     * @param capacity
+     * @return
+     */
     private static int maxValue1(int[] values, int[] weights, int capacity) {
         if (values == null || values.length == 0 ||
                 weights == null || weights.length == 0 ||

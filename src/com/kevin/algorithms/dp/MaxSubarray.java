@@ -27,6 +27,8 @@ public class MaxSubarray {
 
     /**
      * 进一步降低空间复杂度
+     * 时间复杂度：O(n)
+     * 空间复杂度：O(1)
      * @param nums
      * @return
      */
@@ -44,7 +46,12 @@ public class MaxSubarray {
         return max;
     }
 
-
+    /**
+     * 时间复杂度：O(n)
+     * 空间复杂度：O(n)
+     * @param nums
+     * @return
+     */
     private static int maxSubArray1(int[] nums) {
         int[] dp = new int[nums.length + 1];
         int max = 0;

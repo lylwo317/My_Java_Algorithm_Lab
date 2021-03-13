@@ -28,6 +28,10 @@ public class LCSubsequence {
 
     /**
      * 通过一维数组，和选择最短的数组作为列减少空间复杂度
+     *
+     * 时间复杂度：O(n*m) n表示数组A的长度， m表示数组B的长度
+     * 空间复杂度：O(k) k = min(n, m)
+     *
      * @param numsA
      * @param numsB
      * @return
@@ -59,6 +63,10 @@ public class LCSubsequence {
 
     /**
      * 通过一维数组减少空间复杂度
+     *
+     * 时间复杂度：O(n*m) n表示数组A的长度， m表示数组B的长度
+     * 空间复杂度：O(k) k = m 或者 n
+     *
      * @param numsA
      * @param numsB
      * @return
@@ -82,6 +90,10 @@ public class LCSubsequence {
 
     /**
      * 通过滚动数组减少空间复杂度
+     *
+     * 时间复杂度：O(n*m) n表示数组A的长度， m表示数组B的长度
+     * 空间复杂度：O(2k) k = m 或者 n
+     *
      * @param numsA
      * @param numsB
      * @return
@@ -100,6 +112,10 @@ public class LCSubsequence {
         return dp[numsA.length & 1][numsB.length];
     }
 
+    /**
+     * 时间复杂度：O(n*m) n表示数组A的长度， m表示数组B的长度
+     * 空间复杂度：O(n*m)
+     */
     private static int lcs1(int[] numsA, int[] numsB) {
         int[][] dp = new int[numsA.length + 1][numsB.length + 1];
         for (int i = 1; i <= numsA.length; i++) {
@@ -121,6 +137,10 @@ public class LCSubsequence {
     /**
      * 递归
      * 查看dp[i - 1,j - 1]
+     *
+     * 时间复杂度：O(2^n) 当n=m时
+     * 空间复杂度：O(k) k = min(n, m)，n、m是两个数组的长度
+     *
      * @param numsA
      * @param i
      * @param numsB
