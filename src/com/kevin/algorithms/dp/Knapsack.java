@@ -32,7 +32,81 @@ public class Knapsack {
     public static void main(String[] args) {
         int[] values = {6, 3, 5, 4, 6};
         int[] weights = {2, 2, 6, 5, 4};
-        System.out.println(maxValue3(values, weights, 10));
+        System.out.println(maxValueExactly2(values, weights, 10));
+    }
+
+    /**
+     * 正好能放满的方案，否则返回-1
+     *
+     * 优化空间复杂度
+     * @param values
+     * @param weights
+     * @param capacity
+     * @return
+     */
+    private static int maxValueExactly2(int[] values, int[] weights, int capacity) {
+        if (values == null || values.length == 0 ||
+                weights == null || weights.length == 0 ||
+                values.length != weights.length || capacity <= 0) {
+            return 0;
+        }
+        int[] dp = new int[capacity + 1];
+        for (int j = 1; j < dp.length; j++) {//dp[0] = 0, 其它初始化为-1。对于0件物品，正好能放满的容量就是0，所以dp[0]=0
+            dp[j] = -1;
+        }
+        for (int i = 1; i <= values.length; i++) {
+            for (int j = capacity; j >= weights[i-1]; j--) {//优化maxValue2中的continue
+                if (dp[j - weights[i - 1]] == -1) {//放下i不能正好放满(因为放置前面i-1物品都不能正好填满[j - weights[i - 1]，所以放下i后也不能填满j)
+                    dp[j] = dp[j];
+                } else {
+                    //放下i正好能放满
+                    dp[j] = Math.max(
+                            dp[j],//1. 能放满但是不如放下i来得价值大 2. 不能放满，那就选放i的方案，因为它能放满
+                            values[i - 1] + dp[j - weights[i - 1]]);
+                }
+            }
+        }
+
+        return dp[capacity];
+    }
+
+    /**
+     * 正好能放满的方案，否则返回-1
+     * @param values
+     * @param weights
+     * @param capacity
+     * @return
+     */
+    private static int maxValueExactly1(int[] values, int[] weights, int capacity) {
+        if (values == null || values.length == 0 ||
+                weights == null || weights.length == 0 ||
+                values.length != weights.length || capacity <= 0) {
+            return 0;
+        }
+        int[][] dp = new int[values.length + 1][capacity + 1];
+        for (int j = 1; j < dp.length; j++) {//dp[0] = 0, 其它初始化为-1。对于0件物品，正好能放满的容量就是0，所以dp[0]=0
+            dp[0][j] = -1;
+        }
+        for (int i = 1; i <= values.length; i++) {
+            for (int j = 1; j <= capacity; j++) {
+                if (j < weights[i - 1] || dp[i - 1][j - weights[i - 1]] == -1) {
+                    dp[i][j] = dp[i - 1][j];//容量不足以放下i 或者 放下i不能正好放满(因为放置前面i-1物品都不能正好填满[j - weights[i - 1]，所以放下i后也不能填满j)
+                } else {
+                    //放下i正好能放满
+
+                    if (dp[i - 1][j] == -1) {//前i-1不能正好放满最大容量j，那就放i物品
+                        dp[i][j] = values[i - 1] + dp[i - 1][j - weights[i - 1]];
+                    } else {
+                        //前i-1正好放满最大容量j，那就与放入i物品正好能放满最大容量j的价值进行比较
+                        dp[i][j] = Math.max(
+                                dp[i - 1][j],
+                                values[i - 1] + dp[i - 1][j - weights[i - 1]]);//当i=1的时候，如果刚好能放下1物品，则dp[0][j-weights[i-1]]=dp[0][0]=0
+                    }
+                }
+            }
+        }
+
+        return dp[values.length][capacity];
     }
 
     private static int maxValue3(int[] values, int[] weights, int capacity) {
