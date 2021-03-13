@@ -7,6 +7,34 @@ import java.util.HashSet;
 import java.util.Random;
 
 public class Main {
+    public static void main(String[] args) {
+/*
+        testHashMapPutGet();
+        test2();
+        test3(new LinkedHashMap<>());
+        test4(new LinkedHashMap<>());
+        test5(new LinkedHashMap<>());
+*/
+        testBloomFilter();
+    }
+
+    private static void testBloomFilter(){
+        BloomFilter<Integer> bloomFilter = new BloomFilter<>(1_000_0000, 0.01);
+        for (int i = 1; i <= 1_000_0000; i++) {
+            bloomFilter.put(i);
+        }
+
+        int count = 0;
+        for (int i = 1_000_0001; i <= 2_000_0000; i++) {
+            if (bloomFilter.contains(i)) {//误判率
+                count++;
+            }
+        }
+        System.out.println(count);
+
+
+    }
+
     private static void testHashMapPutGet() {
         Map<String, Integer> hashMap = new HashMap<>();
         hashMap.put("hello", 123);
@@ -114,13 +142,5 @@ public class Main {
 
             Asserts.test(map.size() == 0);
         }
-    }
-
-    public static void main(String[] args) {
-        testHashMapPutGet();
-        test2();
-        test3(new LinkedHashMap<>());
-        test4(new LinkedHashMap<>());
-        test5(new LinkedHashMap<>());
     }
 }
