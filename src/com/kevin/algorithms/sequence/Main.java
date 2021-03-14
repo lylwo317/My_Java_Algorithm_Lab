@@ -8,8 +8,8 @@ import com.kevin.datastructures.Asserts;
  */
 public class Main {
     public static void main(String[] args) {
-        Asserts.test(BruteForce02.indexOf("Hello world", "or") == 7);
-        Asserts.test(BruteForce02.indexOf("Hello world", "O") == -1);
+        Asserts.test(KMP.indexOf("Hello worlddgsgsgsdsgsgdsdsdfsfs", "DBCDEDBCEABCDEABCDFBG") == -1);
+//        Asserts.test(KMP.indexOf("Hello world", "O") == -1);
     }
 
 }

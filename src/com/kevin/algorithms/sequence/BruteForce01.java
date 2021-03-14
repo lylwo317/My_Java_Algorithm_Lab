@@ -24,7 +24,8 @@ public class BruteForce01 {
                 tIndex++;
                 pIndex++;
             } else {
-                tIndex -= pIndex - 1;
+//                tIndex -= pIndex - 1;// tIndex = tIndex - (pIndex - 1)
+                tIndex = tIndex - pIndex + 1;
                 pIndex = 0;
             }
         }
