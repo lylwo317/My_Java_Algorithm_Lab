@@ -1,5 +1,4 @@
 .idea/
 *.iml
 out/
-all.json
-translation.json
+*.json
