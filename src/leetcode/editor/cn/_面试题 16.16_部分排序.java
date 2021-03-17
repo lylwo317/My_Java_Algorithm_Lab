@@ -24,21 +24,22 @@ class Solution {
     public int[] subSort(int[] array) {
         if (array.length == 0) return new int[]{-1,-1};
 
-        int l = -1;
         int r = -1;
-
         int max = array[0];
         for (int i = 0; i < array.length; i++) {
-            max = Math.max(max, array[i]);
-            if (array[i] < max) {
+            if (max <= array[i]) {
+                max = array[i];
+            }else{
                 r = i;
             }
         }
 
+        int l = -1;
         int min = array[array.length - 1];
         for (int i = array.length - 1; i >= 0; i--) {
-            min = Math.min(min, array[i]);
-            if (array[i] > min) {
+            if (min >= array[i]) {
+                min = array[i];
+            }else{
                 l = i;
             }
         }
