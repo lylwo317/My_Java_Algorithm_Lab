@@ -74,31 +74,40 @@ class Solution {
      * 使用单调队列
      * 时间复杂度：O(n)
      * 空间复杂度：O(k) 队列中的元素不超过k+1个
+     *
+     * 思路：
+     * 可以将数组想象成折线图，index是x轴，value（代表山峰高度）是y轴。然后相当于要在k区域里面找到最高的山峰。
+     *
+     * 为了能让队列头部拿到的就是现在k区域的最高山峰。可以使用双端队列存储k区域内的最高峰的值。
+     * 具体操作如下：
+     * 1. 当需要将k区域往前移动一个元素时，将元素加入到队列尾部的时候，将队列尾部小于或者等于当前山峰高度的值移除出队列。
+     *    可以认为现在是在操作栈，入栈前将栈顶元素中小于或等于要入栈元素出栈。然后再将新元素入栈。
+     * 2. 从队列头部移除不属于k区域的元素
+     *
      * @param nums
      * @param k
      * @return
      */
     public int[] maxSlidingWindow(int[] nums, int k) {
 //        return maxSlidingWindow1(nums, k);
+        if (k == 1) {
+            return nums;
+        }
+
         int n = nums.length;
         int[] ans = new int[n - k + 1];
         Deque<Integer> dq = new LinkedList<>();
-        for (int i = 0; i < k; i++) {
-            while (!dq.isEmpty()&&nums[dq.peekFirst()] <= nums[i]) {
-                dq.pollFirst();
-            }
-            dq.offerFirst(i);
-        }
-        ans[0] = nums[dq.peekLast()];
-        for (int i = k; i < n; i++) {
-            while (!dq.isEmpty()&&nums[dq.peekFirst()] <= nums[i]) {
-                dq.pollFirst();
-            }
-            while (!dq.isEmpty() && dq.peekLast() <= i - k) {
+        for (int i = 0; i < n; i++) {//k窗口向前移动
+            while (!dq.isEmpty() && nums[dq.peekLast()] <= nums[i]) {
                 dq.pollLast();
             }
-            dq.offerFirst(i);
-            ans[i - k + 1] = nums[dq.peekLast()];
+            while (!dq.isEmpty() && dq.peekFirst() <= i - k) {
+                dq.pollFirst();
+            }
+            dq.offerLast(i);
+            if (i >= k - 1 && !dq.isEmpty()) {//[k-1, n)
+                ans[i - k + 1] = nums[dq.peekFirst()];
+            }
         }
         return ans;
     }
