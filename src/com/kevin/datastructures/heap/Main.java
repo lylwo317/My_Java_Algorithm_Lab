@@ -81,8 +81,8 @@ public class Main {
     }
     public static void main(String[] args) {
 //        testHeap();
-//        testHeapBuild();
-        testTopK();
+        testHeapBuild();
+//        testTopK();
 //        testMinHeapBuild();
     }
 }

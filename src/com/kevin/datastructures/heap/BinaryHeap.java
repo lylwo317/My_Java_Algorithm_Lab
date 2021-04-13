@@ -118,6 +118,7 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements BinaryTreeInfo {
     /**
      * 删除堆顶元素
      * 拿到最后一个
+     * 复杂度：O(log n)
      * @return
      */
     @Override
@@ -134,6 +135,11 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements BinaryTreeInfo {
     }
 
 
+    /**
+     * 复杂度：O(log n)
+     * @param element
+     * @return
+     */
     @Override
     public E replace(E element) {
         elementNotNullCheck(element);
@@ -149,6 +155,10 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements BinaryTreeInfo {
         return old;
     }
 
+    /**
+     * 复杂度：O(log n)
+     * @param element
+     */
     @Override
     public void add(E element) {
         elementNotNullCheck(element);
@@ -169,6 +179,18 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements BinaryTreeInfo {
         }
     }
 
+    /**
+     * 批量建堆
+     *
+     * 自下而上的siftDown
+     * 复杂度：所有节点的高度之和
+     * 2n − log(n+1) = O(n)
+     *
+     * 自上而下的siftUp
+     * 复杂度：所有节点的深度之和
+     * 仅仅是底层叶子节点就达到了O(nlog n)了
+     * O(nlog n)
+     */
     private void heapify() {
         for (int i = (size - 1 - 1) >> 1 ; i >= 0; i--) {
             siftDown(i);
