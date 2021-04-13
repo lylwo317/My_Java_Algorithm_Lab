@@ -95,13 +95,13 @@ class Solution {
         }
 
         int n = nums.length;
-        int[] ans = new int[n - k + 1];
+        int[] ans = new int[n - (k - 1)];
         Deque<Integer> dq = new LinkedList<>();
         for (int i = 0; i < n; i++) {//k窗口向前移动
             while (!dq.isEmpty() && nums[dq.peekLast()] <= nums[i]) {
                 dq.pollLast();
             }
-            while (!dq.isEmpty() && dq.peekFirst() <= i - k) {
+            if (!dq.isEmpty() && dq.peekFirst() <= i - k) {
                 dq.pollFirst();
             }
             dq.offerLast(i);
@@ -126,7 +126,7 @@ class Solution {
         PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>() {
             @Override
             public int compare(int[] o1, int[] o2) {
-                return o1[0] != o2[0] ? o2[0] - o1[0] : o2[1] - o1[1];
+                return o1[0] != o2[0] ? o2[0] - o1[0]/*比较值*/ : o2[1] - o1[1]/*比较索引*/;
             }
         });
         //初始化队列
@@ -134,7 +134,7 @@ class Solution {
             pq.offer(new int[]{nums[i], i});
         }
 
-        ans[0] = pq.peek()[0];
+        ans[0] = pq.peek()[0]/*值*/;
         for (int i = k; i < n; i++) {
             pq.offer(new int[]{nums[i], i});
             while (pq.peek()[1] <= i - k) {//保证最大值是在(i-k,i]范围
