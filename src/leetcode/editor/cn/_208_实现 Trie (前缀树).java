@@ -56,12 +56,10 @@ class _208_实现_Trie{
 //leetcode submit region begin(Prohibit modification and deletion)
 class Trie {
     private class Node{
-        Node parent;
         Map<Character, Node> children;
         boolean isWord;
 
-        public Node(Node parent) {
-            this.parent = parent;
+        public Node() {
         }
     }
 
@@ -77,19 +75,21 @@ class Trie {
             return;
         }
         if (root == null) {
-            root = new Node(null);
+            root = new Node();
         }
 
         Node node = root;
-        for (char c : word.toCharArray()) {
+
+        for (int i = 0; i < word.length(); i++) {
+            char ch = word.charAt(i);
             if (node.children == null) {
                 node.children = new HashMap<>();
             }
 
-            Node child = node.children.get(c);
+            Node child = node.children.get(ch);
             if (child == null) {
-                child = new Node(node);
-                node.children.put(c, child);
+                child = new Node();
+                node.children.put(ch, child);
             }
             node = child;
         }
@@ -115,9 +115,10 @@ class Trie {
             return null;
         }
         Node node = root;
-        for (char c : prefix.toCharArray()) {
+        for (int i = 0; i < prefix.length(); i++) {
+            char ch = prefix.charAt(i);
             if (node.children != null) {
-                node = node.children.get(c);
+                node = node.children.get(ch);
                 if (node == null) {
                     return null;
                 }
