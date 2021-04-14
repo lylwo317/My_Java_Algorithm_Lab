@@ -24,18 +24,14 @@ class Solution {
         Deque<Integer> stack = new ArrayDeque<>();
         int[] rMaxDiffArray = new int[t.length];
         for (int i = 0; i < t.length; i++) {
-            while (true) {
-                Integer top = stack.peek();
-                if (top == null || t[top] >= t[i]) {
-                    //t[top]是t[i]的左边最大
-                    stack.push(i);
-                    break;
-                } else {
-                    //t[i]是t[top]的右边最大
-                    rMaxDiffArray[top] = i - top;
-                    stack.pop();
-                }
+            Integer top;
+            while ((top = stack.peek()) != null && t[top] < t[i]) {
+                //t[top]的右边第一个比它大的值是t[i]
+                rMaxDiffArray[top] = i - top;
+                stack.pop();
             }
+            //t[i]的左边第一个比它大的值是t[top] 或者 null
+            stack.push(i);
         }
 
         return rMaxDiffArray;
