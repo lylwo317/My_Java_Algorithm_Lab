@@ -39,8 +39,6 @@ class _198_打家劫舍{
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     /**
-     *
-     *
      * 状态定义：
      * dp[i]表示前i间房屋能偷窃到的最高总金额
      *
