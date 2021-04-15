@@ -57,20 +57,23 @@ class Solution {
      * dp[1] = max(nums[0], nums[1])
      *
      * 状态转移方程：
+     * dp[i] = max(dp[i-1], dp[i-2] + nums[i])
+     *
      * 当不偷窃最后一间房间时：
-     * i ∈ [0, i-1]
+     * 房间范围 [0, i-1]
      *
      * 当偷窃最后一间房间时：
-     * i ∈ [1, i]
-     * dp[i] = max(dp[i-1], dp[i-2] + nums[i])
+     * 房间范围 [1, i]
+     *
+     * 比较这两个范围中最大的dp，就是所能偷取的最大金额
      *
      * @param nums
      * @return
      */
     public int rob(int[] nums) {
-        if (nums.length == 0) {
-            return 0;
-        }
+//        if (nums.length == 0) {
+//            return 0;
+//        }
         if (nums.length == 1) {
             return nums[0];
         }
