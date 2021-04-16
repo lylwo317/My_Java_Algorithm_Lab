@@ -94,9 +94,11 @@ class Solution {
         }
         int[] count = new int[26];
         int length = s1.length();
+        char[] s1CharArray = s1.toCharArray();
+        char[] s2CharArray = s2.toCharArray();
         for (int i = 0; i < length; i++) {
-            count[s1.charAt(i) - 'a']++;
-            count[s2.charAt(i) - 'a']--;
+            count[s1CharArray[i] - 'a']++;
+            count[s2CharArray[i] - 'a']--;
         }
         for (int i = 0; i < count.length; i++) {
             if (count[i] != 0) {
