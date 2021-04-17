@@ -26,6 +26,12 @@ class _242_有效的字母异位词{
     Solution solution = new Solution();
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
+    /**
+     * 在长度一样的情况下，判断里面各个字母出现的次数是否相同
+     * @param s1
+     * @param s2
+     * @return
+     */
     public boolean isAnagram(String s1, String s2) {
         if (s1 == null || s2 == null) {
             return false;
