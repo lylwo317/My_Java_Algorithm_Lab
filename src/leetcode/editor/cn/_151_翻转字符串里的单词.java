@@ -81,7 +81,7 @@ class Solution {
      * @param s
      * @return
      */
-    public String reverseWords(String s) {
+    public String reverseWords1(String s) {
         if (s == null || s.length() == 0) {
             return s;
         }
@@ -97,37 +97,34 @@ class Solution {
      * @param s
      * @return
      */
-    public String reverseWords1(String s) {
+    public String reverseWords(String s) {
         if (s == null || s.length() == 0) {
             return s;
         }
 
-
         char[] charArray = s.toCharArray();
 
         //去除空格
-        boolean isSpace = true;//-1 is space
-        int start = -1;
+        boolean curPreIsSpace = true;//前一个字符是否为空值，这里指的是-1
+        int cur = 0;
         for (int i = 0; i < charArray.length; i++) {
-            if (isSpace) {
-                //start的下一个必须放一个非空的字符
-                if (charArray[i] != ' ') {
-                    charArray[++start] = charArray[i];
-                    isSpace = false;
-                }
-            } else{
-                if (charArray[i] == ' ') {
-                    isSpace = true;
-                }
-                charArray[++start] = charArray[i];
+            if (charArray[i] != ' ') {
+                charArray[cur++] = charArray[i];
+                curPreIsSpace = false;
+            }else if (!curPreIsSpace){ // && charArray[i] == ' '
+                charArray[cur++] = ' ';
+                curPreIsSpace = true;
             }
         }
 
         //翻转字符串
-        if (isSpace) {//最后面一串都是空格，丢弃
-            start--;
+        if (curPreIsSpace) {//最后面一串都是空格，丢弃
+            cur--;
         }
-        int count = start + 1;
+        int count = cur;
+        if (count == - 1) {//都是空格
+            return "";
+        }
         revertCharArray(charArray, 0, count);
 
         //翻转单词
@@ -152,7 +149,7 @@ class Solution {
      */
     private void revertCharArray(char[] charArray, int begin, int end) {
         end--;
-        while (begin <= end) {
+        while (begin < end) {
             char tmp = charArray[begin];
             charArray[begin] = charArray[end];
             charArray[end] = tmp;
@@ -165,6 +162,8 @@ class Solution {
 
     public static void main(String[] args) {
         _151_翻转字符串里的单词 problem = new _151_翻转字符串里的单词();
+        System.out.println(problem.solution.reverseWords(""));
+        System.out.println(problem.solution.reverseWords("        "));
         System.out.println(problem.solution.reverseWords("  Bob    Loves  Alice   "));
         System.out.println(problem.solution.reverseWords("the sky is blue"));
     }
