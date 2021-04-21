@@ -80,43 +80,19 @@ class Solution {
         if (chars[0] == '0') {
             return 0;
         }
-        if (chars.length == 1) {
-            return inRange(chars[0]) ? 1 : 0;
-        }
-        int[] dp = new int[chars.length];
+        int[] dp = new int[chars.length + 1];
         dp[0] = 1;
-        if (inRange(chars[1])) {
-            dp[1] = dp[0];
-        }
-        if (inRange(chars[0], chars[1])) {
-            dp[1] += 1;
-        }
-        for (int i = 2; i < chars.length; i++) {
-            if (inRange(chars[i-1], chars[i])) {
-                dp[i] = dp[i - 2];
-            }
 
-            if (inRange(chars[i])) {
-                dp[i] += dp[i - 1];
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] != '0') {
+                dp[i + 1] += dp[i];
+            }
+            if (i >= 1 && chars[i - 1] != '0' && (chars[i - 1] - '0') * 10 + (chars[i] - '0') <= 26) {
+                dp[i + 1] += dp[i - 1];
             }
         }
-        return dp[chars.length - 1];
-    }
 
-    private boolean inRange(char first) {
-        return first >= '1' && first <= '9';
-    }
-
-    private boolean inRange(char first, char second) {
-        if (first <= '0') {
-            return false;
-        } else if (first == '1') {
-            return second <= '9' && second >= '0';
-        } else if (first == '2') {
-            return second <= '6' && second >= '0';
-        }
-
-        return false;
+        return dp[chars.length];
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
