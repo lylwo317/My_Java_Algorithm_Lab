@@ -53,6 +53,7 @@ class Solution {
         Arrays.fill(dp, 1);
         int maxValue = nums[0];
         int maxSize = 1;
+        int maxIndex = 0;
         for (int j = 1; j < nums.length; j++) {
             for (int i = 0; i < j; i++) {
                 if (nums[j] % nums[i] == 0) {
@@ -62,6 +63,7 @@ class Solution {
             if (dp[j] > maxSize) {
                 maxSize = dp[j];
                 maxValue = nums[j];
+                maxIndex = j;
             }
         }
 
@@ -71,7 +73,7 @@ class Solution {
             list.add(nums[0]);
             return list;
         }
-        for (int i = nums.length - 1; i >= 0 && maxSize > 0; i--) {
+        for (int i = maxIndex; i >= 0 && maxSize >= 1; i--) {
             if (dp[i] == maxSize && maxValue % nums[i] == 0) {
                 list.add(nums[i]);
                 maxValue = nums[i];
@@ -86,7 +88,7 @@ class Solution {
     public static void main(String[] args) {
         _368_最大整除子集 problem = new _368_最大整除子集();
         System.out.println(
-                problem.solution.largestDivisibleSubset(new int[]{3, 17})
+                problem.solution.largestDivisibleSubset(new int[]{4,8,10,240})
         );
     }
 }
