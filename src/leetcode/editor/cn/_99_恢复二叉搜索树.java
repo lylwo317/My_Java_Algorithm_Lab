@@ -28,7 +28,7 @@ package leetcode.editor.cn;
 // 树上节点的数目在范围 [2, 1000] 内 
 // -231 <= Node.val <= 231 - 1 
 // 
-// Related Topics 树 深度优先搜索 
+// Related Topics 树 深度优先搜索 Morris遍历
 // 👍 455 👎 0
 
 //https://leetcode-cn.com/problems/recover-binary-search-tree/
@@ -54,6 +54,11 @@ class _99_恢复二叉搜索树{
  * }
  */
 class Solution {
+
+    private TreeNode first = null;
+    private TreeNode second = null;
+    private TreeNode pre = null;
+
     /**
      * 这里核心就是通过观察交换后的中序遍历的结果特征得出规律
      *
@@ -73,7 +78,8 @@ class Solution {
      * @param root
      */
     public void recoverTree(TreeNode root) {
-        findWrongNodes(root);
+//        findWrongNodes(root);
+        findWrongNodesByMorris(root);
         //交换两个错误节点的值
         if (first != null && second != null) {
             int tmp = first.val;
@@ -82,22 +88,58 @@ class Solution {
         }
     }
 
-    private TreeNode first = null;
-    private TreeNode second = null;
-    private TreeNode pre = null;
+    /**
+     * 通过Morris中序遍历找到错误的两个节点
+     * 空间复杂度：O(1)
+     * @param node
+     */
+    private void findWrongNodesByMorris(TreeNode node) {
+        while (node != null) {
+            if (node.left != null) {
+                TreeNode pred;
+                pred = node.left;
+                while (pred.right != null && pred.right != node) {
+                    pred = pred.right;
+                }
+                if (pred.right == null) {
+                    pred.right = node;
+                    node = node.left;
+                } else {//pred.right == node
+                    pred.right = null;
+                    //print
+                    checkOrder(node);
+                    node = node.right;
+                }
+            } else {
+               //print
+                checkOrder(node);
+                node = node.right;
+            }
+        }
+    }
+
+    private void checkOrder(TreeNode node) {
+        if (pre != null && pre.val > node.val) {
+            if (first == null) {
+                first = pre;
+            }
+
+            second = node;
+        }
+        pre = node;
+    }
+
+    /**
+     * 通过中序遍历找到错误的两个节点
+     * 空间复杂度：O(n)
+     * @param root
+     */
     private void findWrongNodes(TreeNode root) {
         if (root == null) {
             return;
         }
         findWrongNodes(root.left);
-        if (pre != null && pre.val > root.val) {
-            if (first == null) {
-                first = pre;
-            }
-
-            second = root;
-        }
-        pre = root;
+        checkOrder(root);
         findWrongNodes(root.right);
     }
 }
