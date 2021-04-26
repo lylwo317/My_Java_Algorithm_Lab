@@ -50,18 +50,26 @@ class _7_整数反转{
     Solution solution = new Solution();
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
+    /**
+     * 取余，然后除以10，模拟弹出栈
+     * 乘以10+取余，模拟入栈
+     * 这里最主要还需要判断越界的情况
+     * @param x
+     * @return
+     */
     public int reverse(int x) {
         int rev = 0;
         while (x != 0) {
-            int pop = x % 10;
+//            int pop = x % 10;
+            if (x > 0 && (rev > (Integer.MAX_VALUE - x % 10) / 10)) {
+//            if (x > 0 && (rev * 10 + x %10 > Integer.MAX_VALUE)) {
+                return 0;
+            }
+            if (x < 0 && (rev < (Integer.MIN_VALUE - x % 10) / 10)) {
+                return 0;
+            }
+            rev = rev * 10 + x % 10;
             x = x / 10;
-            if (rev > Integer.MAX_VALUE / 10 || (rev == Integer.MAX_VALUE / 10 && pop > 7)) {
-                return 0;
-            }
-            if (rev < Integer.MIN_VALUE / 10 || (rev == Integer.MIN_VALUE / 10 && pop < -8)) {
-                return 0;
-            }
-            rev = rev * 10 + pop;
         }
 
         return rev;
