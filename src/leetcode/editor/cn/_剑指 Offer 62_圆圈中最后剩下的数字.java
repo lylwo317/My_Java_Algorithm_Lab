@@ -39,18 +39,23 @@ class Solution {
     /**
      * 约瑟夫环问题
      *
-     * 深度遍历找到最后一个人
+     * 核心是找规律
+     * f(n,m) = ( f(n-1,m) + m ) % n
+     *
      * @param n
      * @param m
      * @return
      */
     public int lastRemaining(int n, int m) {
-        if (n == 1) {
-            return 0;
+        //f(1,m) = 0
+        int x = 0;
+
+        //从f(2,m)递推到f(n,m)
+        for (int i = 2; i <= n; i++) {
+            x = (x + m) % i;
         }
 
-
-        return 0;
+        return x;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
