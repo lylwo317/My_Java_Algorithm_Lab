@@ -39,7 +39,7 @@ class _42_接雨水{
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     /**
-     * 其实可以这样想象，决定每个柱子蓄水的多少，取决于柱子两边中的最短边
+     * 其实可以这样想象，决定每个柱子蓄水的多少，取决于柱子两边中的比当前柱子高的最短边
      *
      * |   |
      * | | |
