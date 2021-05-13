@@ -180,7 +180,9 @@ class Solution {
         for (int i = 1; i <= steps; i++) {
             int[] dpCur = dp[i & 1];
             int[] dpPre = dp[(i - 1) & 1];
-            for (int j = 0; j <= maxColumn; j++) {
+            //优化2：因为当maxColumn > i时，就不应该以maxColumn为边界，因为通过i个steps是无法到达超过i索引的位置的
+            int edge = Math.min(i, maxColumn);
+            for (int j = 0; j <= edge; j++) {
 //                dp[i & 1][j] = dp[(i - 1) & 1][j];//local
                 dpCur[j] = dpPre[j];
                 if (j - 1 >= 0) {
