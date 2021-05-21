@@ -11,7 +11,7 @@ package com.kevin.algorithms.dp;
  *
  * 状态转移方程：
  * if(numsA[i - 1] == numsB[j - 1]){
- *     dp[i,j] = dp[i-1][dp-j] + 1
+ *     dp[i,j] = dp[i-1][j-1] + 1
  * }else{
  *     dp[i,j] = Max(dp[i-1][j],dp[i][j-1])
  * }
