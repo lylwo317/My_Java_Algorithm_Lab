@@ -58,11 +58,11 @@ class Solution {
      * @return
      */
     public ListNode removeElements(ListNode head, int val) {
-        ListNode newHead = new ListNode(0);
+        ListNode newHead = new ListNode();
         ListNode tail = newHead;
 
         while (head != null) {
-            if (head.val != val) {
+            if (head.val != val) {//不是要删除的节点，就接入到tail，否则就跳过
                 tail.next = head;
                 tail = tail.next;
             }
